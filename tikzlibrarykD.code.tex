@@ -1,0 +1,118 @@
+
+\usetikzlibrary[cd]
+
+% ################################################################ LET'S DANCE #
+
+
+
+% ======================================================== NODE NAME GENERATOR =
+
+% Note: maybe a switch to preserve/erase spaced would be useful
+\def\kDSieveString#1 #2\GO%
+  {\kDSieveWord#1\GO\ifx\relax#2\else\space\kDSieveString#2\GO\fi}
+
+\def\kDSieveWord#1#2\GO%
+  {\kDSieveCharacter#1\ifx\relax#2\else\kDSieveWord#2\GO\fi}
+
+% Note: spaces after number avoid stray \relax
+\def\kDSieveCharacter#1%
+  {\ifnum`#1=44 \else% , comma
+   \ifnum`#1=46 \else% . dot
+   \ifnum`#1=58 \else% : colon
+   \ifnum`#1=92 \else% \ backslash
+   #1\fi\fi\fi\fi}
+
+\def\kDSanitize#1\into#2\GO%
+  {\kDMeaningOf#1 \into Meaning\GO% Note I put an extra space for easy parsing
+   \expandafter\def\csname#2\endcsname% and catch it as the empty exception
+     {\ifx\Meaning\space\else\expandafter\kDSieveString\Meaning\GO\fi}}
+
+\def\kDMeaningOf#1\into#2\GO%
+  {\expandafter\CutHeadOf\meaning#1\at>\into Trash\and #2\GO}
+
+% ========================================================= DRAWING PRIMITIVES =
+
+\def\DrawObject#1\withNode#2\GO%
+  {\kDSanitize#1\into SafeName\GO%
+   \edef\tmp{[name={\SafeName}] #2 {$#1$}}%
+   \expandafter\node\tmp;}
+
+\def\DrawMorphism#1\withNode#2\withEdge#3\from#4\to#5\GO%
+  {\expandafter\kDSanitize#1\into SafeName\GO%
+   \edef\tmp{[commutative diagrams/every arrow] (#4) edge [#3]
+    node [commutative diagrams/every label,name={\SafeName}] #2 {$#1$} (#5)}%
+    \expandafter\path\tmp;}
+
+% ============================================================ PARSING HELPERS =
+
+\def\CutHeadOf#1\at#2\into#3\and#4\GO%
+  {\def\Cutter##1#2##2\GO%
+     {\expandafter\def\csname#3\endcsname{##1}%
+      \expandafter\def\csname#4\endcsname{##2}}%
+   \expandafter\Cutter#1\GO}
+
+\def\Flip#1\aroundFirst#2\into#3\GO%
+  {\def\Flipper#2##1#2##2\GO%
+     {\expandafter\def\csname#3\endcsname{##2##1}}%
+   \def\flippable{#2#1#2}%
+   \expandafter\Flipper\flippable\GO}
+
+\def\CutTailOf#1\at#2\into#3\and#4\GO%
+  {\Flip#1\aroundFirst#2\into Flipped\GO%
+   \CutHeadOf\Flipped#2\at#2\into #4\and #3\GO%
+   \expandafter\CutHeadOf\csname#3\endcsname#2\at#2\into #3\and Trash\GO}
+
+% ==================================================================== PARSERS =
+
+\def\ParseMorphism#1\GO%
+  {\CutTailOf#1\at:\into Head\and EdgeSpec\GO%
+   \CutTailOf\Head\at=\into NodeSpec\and MathSpec\GO}
+
+\def\ParseMorphismAlt#1\GO%
+  {\CutTailOf#1\at=\into NodeSpec\and MathSpec\GO}
+
+\def\ParseObject#1\GO%
+  {\CutTailOf#1\at=\into NodeSpec\and MathSpec\GO}
+
+% ========================================================== INTERNAL COMMANDS =
+
+\def\DoObject#1\GO%
+  {\ParseObject#1\GO
+   \DrawObject\MathSpec\withNode\NodeSpec\GO}
+
+\def\DoMorphism #1 #2 #3\GO%
+  {\ParseMorphism#2\GO%
+   \DrawMorphism\MathSpec\withNode\NodeSpec\withEdge{\EdgeSpec}\from#1\to#3\GO}
+
+\def\DoMorphismChain #1 #2 #3 #4\GO%
+  {\DoMorphism {#1} {#2} {#3}\GO%
+   \ifx\relax#4\else\DoMorphismChain {#3} #4\GO\fi}
+
+\def\DoMorphismAlt#1: #2 #3 #4\GO%
+  {\ParseMorphismAlt#1\GO%
+   \DrawMorphism\MathSpec\withNode\NodeSpec\withEdge{#3}\from#2\to#4\GO}
+
+\def\DoMorphismAltList #1, #2\GO%
+  {\DoMorphismAlt#1\GO%
+   \ifx\relax#2\else\DoMorphismAltList #2\GO\fi}
+
+% ============================================================= USER INTERFACE =
+
+\def\obj#1;{\DoObject #1\GO}
+
+\def\MorChain #1;{\DoMorphismChain #1 \GO}
+\def\MorList* #1;{\DoMorphismAltList #1, \GO}
+
+
+\def\mor{\futurelet\MaybeStar\MaybeStarredMor}
+\def\MaybeStarredMor{\ifx*\MaybeStar \let\next\MorList
+\else \let\next\MorChain \fi \next}
+
+% ================================================================= ENVIROMENT =
+
+\def\startcommutativediagram%
+  {\starttikzpicture[commutative diagrams/every diagram]}
+\def\stopcommutativediagram%
+  {\stoptikzpicture}
+
+% #################################################################### THE END #
