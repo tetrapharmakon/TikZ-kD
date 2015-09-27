@@ -1,23 +1,23 @@
 \def\coker{{\rm coker}\,}
 
-\matrix[row sep=2em,column sep=2em]{
+\matrix[kD/every matrix]{
             & \obj \ker a;   & \obj \ker b;   & \obj \ker c;   \\
             & \obj A;        & \obj B;        & \obj C;        & \obj 0; \\
 \obj(0')=0; & \obj A';       & \obj B';       & \obj C';       \\
             & \obj \coker a; & \obj \coker b; & \obj \coker c; \\
 };
 
-
 \mor {ker a} -> {ker b} -> {ker c};
 \mor A f:-> B g:-> C -> 0;
 \mor 0' -> A' f':-> B' g':-> C';
 \mor {coker a} -> {coker b} -> {coker c};
-\mor {ker a} -> A a:-> A' -> {coker a};
-\mor {ker b} -> B b:-> B' -> {coker b};
-\mor {ker c} -> C c:-> C' -> {coker c};
 
 \coordinate (tail) at ($(ker b)!2!(ker c)$);
 \coordinate (head) at ($(coker b)!2!(coker a)$);
-\coordinate (belly) at ($(tail)!0.5!(head)$);
+\coordinate (belly) at ($(tail)!0.52!(head)$);
 \draw[->,rounded corners]
   (ker c) -- (tail) -- (tail|-belly) -- (head|-belly) -- (head) -- (coker a);
+
+\mor {ker a} -> A {[near start]}=a:{->,kD/crossing over} A' -> {coker a};
+\mor {ker b} -> B {[near start]}=b:{->,kD/crossing over} B' -> {coker b};
+\mor {ker c} -> C {[near start]}=c:{->,kD/crossing over} C' -> {coker c};
