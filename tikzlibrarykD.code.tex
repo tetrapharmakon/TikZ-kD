@@ -101,15 +101,21 @@
 
 % ========================================================= DRAWING PRIMITIVES =
 
+\newlinechar=`\^^J
+
 \def\DrawObject#1\withNode#2\GO%
   {\kDSanitize#1\into SafeName\GO%
+   \kDMeaningOf#1\into Zup\GO%
+   \message{^^J\Zup\space-> \SafeName}
    \edef\tmp{[name={\SafeName}] #2 {$#1$}}%
    \expandafter\node\tmp;}
 
 \def\DrawMorphism#1\withNode#2\withEdge#3\from#4\to#5\GO%
-  {%\expandafter\kDSanitize#1\into SafeName\GO%
+  {\kDSanitize#1\into SafeName\GO%
+   \kDMeaningOf#1\into Zup\GO%
+   \message{^^J\Zup\space-> \SafeName}
    \edef\tmp{[kD/every arrow] (#4) edge [#3]
-    node [kD/every label,name={}] #2 {$#1$} (#5)}%
+    node [kD/every label,name={\SafeName}] #2 {$#1$} (#5)}%
     \expandafter\path\tmp;}
 
 % ============================================================ GENERAL HELPERS =
