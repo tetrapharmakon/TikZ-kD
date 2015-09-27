@@ -1,0 +1,32 @@
+
+
+
+
+
+
+\newif\ifLuaTeX
+\begingroup\expandafter\expandafter\expandafter\endgroup
+\expandafter\ifx\csname directlua\endcsname\relax
+  \LuaTeXfalse
+\else
+  \LuaTeXtrue
+\fi
+
+
+\def\RequireLuaTeX{%
+  \ifLuaTeX\else
+    \begingroup
+      \errorcontextlines=-1\relax
+      \newlinechar=10\relax
+      \errmessage{^^J
+      ********************************************^^J
+      * LuaTeX is required to compile this document.^^J
+      * Sorry!^^J
+      ********************************************}%
+    \endgroup
+  \fi}
+
+\RequireLuaTeX
+
+
+

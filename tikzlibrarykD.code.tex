@@ -22,6 +22,10 @@
 
 \def\kDtikzset{\pgfqkeys{/tikz/kD}}
 
+\tikzset{
+  ^>/.style={bend left,->},
+}
+
 \kDtikzset{
 %  arrows/.code={\tikzcdset{every arrow/.append style={#1}}},
 %  labels/.code={\tikzcdset{every label/.append style={#1}}},
@@ -105,15 +109,12 @@
 
 \def\DrawObject#1\withNode#2\GO%
   {\kDSanitize#1\into SafeName\GO%
-   \kDMeaningOf#1\into Zup\GO%
-   \message{^^J\Zup\space-> \SafeName}
+   \message{XXXXX\SafeName XXXXX}
    \edef\tmp{[name={\SafeName}] #2 {$#1$}}%
    \expandafter\node\tmp;}
 
 \def\DrawMorphism#1\withNode#2\withEdge#3\from#4\to#5\GO%
   {\kDSanitize#1\into SafeName\GO%
-   \kDMeaningOf#1\into Zup\GO%
-   \message{^^J\Zup\space-> \SafeName}
    \edef\tmp{[kD/every arrow] (#4) edge [#3]
     node [kD/every label,name={\SafeName}] #2 {$#1$} (#5)}%
     \expandafter\path\tmp;}
@@ -127,7 +128,7 @@
 \def\kDSplice#1\at#2\into#3\and#4\GO%
   {\def\Rimmer##1#2\GO{\kDCSDef{#4}{##1}}%
    \def\Cutter##1#2##2\GO%
-     {\ifx##2\relax\relax\kDCSDef{#3}{}\kDCSDef{#4}{##1}%
+     {\def\snd{##2}\ifx\snd\empty\kDCSDef{#3}{}\kDCSDef{#4}{##1}%
       \else\kDCSDef{#3}{##1}\Rimmer##2\GO\fi}%
    \Cutter#1#2\GO}
 
@@ -146,7 +147,8 @@
 % ========================================================== INTERNAL COMMANDS =
 
 \def\DoObject#1\GO%
-  {\ParseObject#1\GO
+  {\ParseObject#1\GO%
+%\show\MathSpec\show\NodeSpec%
    \DrawObject\MathSpec\withNode\NodeSpec\GO}
 
 \def\DoMorphism #1 #2 #3\GO%
