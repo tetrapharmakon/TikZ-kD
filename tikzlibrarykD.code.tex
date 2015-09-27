@@ -82,7 +82,7 @@
      {\ifx\Meaning\space\else\expandafter\kDSieveString\Meaning\GO\fi}}
 
 \def\kDMeaningOf#1\into#2\GO%
-  {\expandafter\CutHeadOf\meaning#1\at>\into Trash\and #2\GO}
+  {\expandafter\kDSplice\meaning#1\at>\into Trash\and #2\GO}
 
 % Note: maybe a switch to preserve/erase spaces would be useful
 \def\kDSieveString#1 #2\GO%
@@ -112,9 +112,11 @@
     node [kD/every label,name={}] #2 {$#1$} (#5)}%
     \expandafter\path\tmp;}
 
-% ============================================================ PARSING HELPERS =
+% ============================================================ GENERAL HELPERS =
 
 \def\kDCSDef#1#2{\expandafter\def\csname#1\endcsname{#2}}
+
+% ============================================================ PARSING HELPERS =
 
 \def\kDSplice#1\at#2\into#3\and#4\GO%
   {\def\Rimmer##1#2\GO{\kDCSDef{#4}{##1}}%
@@ -122,31 +124,6 @@
      {\ifx##2\relax\relax\kDCSDef{#3}{}\kDCSDef{#4}{##1}%
       \else\kDCSDef{#3}{##1}\Rimmer##2\GO\fi}%
    \Cutter#1#2\GO}
-
-%\def\kDSplice#1\atFirst#2\into#3\and#4\GO%
-%  {\def\Rimmer##1#2\GO{##1}%
-%   \def\Cutter##1#2##2\GO%
-%     {\expandafter\edef\csname#3\endcsname{##1}%
-%      \expandafter\edef\csname#4\endcsname%
-%        {\ifx##2\relax\else\Rimmer##2\GO\fi}}%
-%   \expandafter\Cutter#1#2\GO}
-%
-\def\CutHeadOf#1\at#2\into#3\and#4\GO%
-  {\def\Cutter##1#2##2\GO%
-     {\expandafter\def\csname#3\endcsname{##1}%
-      \expandafter\def\csname#4\endcsname{##2}}%
-   \Cutter#1\GO}
-%
-%\def\Flip#1\aroundFirst#2\into#3\GO%
-%  {\def\Flipper#2##1#2##2\GO%
-%     {\expandafter\def\csname#3\endcsname{##2##1}}%
-%   \def\flippable{#2#1#2}%   BIG PROBLEM HERE
-%   \expandafter\Flipper\flippable\GO}
-%
-%\def\CutTailOf#1\at#2\into#3\and#4\GO%
-%  {\Flip#1\aroundFirst#2\into Flipped\GO%
-%   \CutHeadOf\Flipped#2\at#2\into #4\and #3\GO%
-%   \expandafter\CutHeadOf\csname#3\endcsname#2\at#2\into #3\and Trash\GO}
 
 % ==================================================================== PARSERS =
 
