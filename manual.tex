@@ -1,32 +1,31 @@
 
-
-
-
-
-
-\newif\ifLuaTeX
+\newif\ifConTeXt
 \begingroup\expandafter\expandafter\expandafter\endgroup
-\expandafter\ifx\csname directlua\endcsname\relax
-  \LuaTeXfalse
+\expandafter\ifx\csname starttext\endcsname\relax
+  \ConTeXtfalse
 \else
-  \LuaTeXtrue
+  \ConTeXttrue
 \fi
 
+\def\RequireConTeXt%
+  {\ifConTeXt\else\begingroup
+     \errorcontextlines=-1\relax
+     \newlinechar=10\relax
+     \let~\space
+     \errmessage{^^J^^J
+~~~~~_________________________^^J
+~~~~~|~~~~~~~~~~~~~~~~~~~~~~~|^^J
+~~~~~|~~ ConTeXt (MKIV) is ~~|^^J
+~~~~~|~ required to compile ~|^^J
+~~~~~|~ this document. ~~~~~~|^^J
+~~~~~|~~~~~~~~~~~~~~~~~~~~~~~|^^J
+~~~~~|~~~~~~~~~~~~~~~~~ -P. ~|^^J
+~~~~~|~~~~~~~~~~~~~~~~~~~~~~~|^^J
+~~~~~|_______________________|^^J^^J^^J}%
+   \endgroup\fi}
 
-\def\RequireLuaTeX{%
-  \ifLuaTeX\else
-    \begingroup
-      \errorcontextlines=-1\relax
-      \newlinechar=10\relax
-      \errmessage{^^J
-      ********************************************^^J
-      * LuaTeX is required to compile this document.^^J
-      * Sorry!^^J
-      ********************************************}%
-    \endgroup
-  \fi}
+\RequireConTeXt
 
-\RequireLuaTeX
-
-
-
+\starttext
+Hello world.
+\stoptext
