@@ -1,11 +1,12 @@
 
+% ############################################################## CONTEXT CHECK #
+
 \newif\ifConTeXt
-\begingroup\expandafter\expandafter\expandafter\endgroup
-\expandafter\ifx\csname starttext\endcsname\relax
-  \ConTeXtfalse
-\else
-  \ConTeXttrue
-\fi
+
+% Trick stolen from iftex. The second line is expanded inside the group so
+% the global scope isn't polluted by \csname defining the token.
+\begingroup\expandafter\expandafter\expandafter\endgroup\expandafter
+  \ifx\csname starttext\endcsname\relax\ConTeXtfalse\else\ConTeXttrue\fi
 
 \def\RequireConTeXt%
   {\ifConTeXt\else\begingroup
@@ -26,6 +27,39 @@
 
 \RequireConTeXt
 
+% ##############################################################################
+
+% ################################################################ LET'S DANCE #
+
+\usemodule[tikz]
+\usetikzlibrary[kD]
+\usetikzlibrary[calc]
+
+% ==============================================================================
+
+\setuplayout
+  [grid=yes,
+   backspace=0.125\paperwidth,width=middle,
+   topspace=0.088\paperheight,height=middle,
+   header=0bp,footer=0bp]
+\setuphead[title][alternative=margin,align=flushright,page=no]
+\setuppagenumbering[location=]
+\setuptyping[option=TEX,style=tx]
+\setupframed[width=broad,align=middle,frame=off]
+
+\def\DoExample#1#2{%
+  \title{#1}
+  \framed{
+    \startcommutativediagram
+    \input examples/#2.tex
+    \stopcommutativediagram
+  }
+  \typefile[TEX]{examples/#2.tex}
+}
+
 \starttext
-Hello world.
+\DoExample{Snake Lemma}{snake_lemma}
+\DoExample{K4 associahedron}{k4_associahedron}
 \stoptext
+
+% #################################################################### THE END #

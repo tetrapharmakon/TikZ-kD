@@ -23,8 +23,19 @@
 \def\kDtikzset{\pgfqkeys{/tikz/kD}}
 
 \tikzset{
+  kD/.search also={/tikz},
+  kD/.cd,
   ^>/.style={bend left,->},
+  ÷>/.style={->,crossing over},
+  </.style={near start},
+  >/.style={near end},
+  /handlers/first char syntax=true,
+  /handlers/first char syntax/the character (/.initial=\kDNamingShortcut,
+  sh/.style={transform canvas={shift={($(\tikztostart)!#1!-90:(\tikztotarget)-(\tikztostart)$)}}},
 }
+
+\def\kDRemoveParens(#1){#1}
+\def\kDNamingShortcut#1{\pgfkeysalso{/tikz/name={\kDRemoveParens#1}}}
 
 \kDtikzset{
 %  arrows/.code={\tikzcdset{every arrow/.append style={#1}}},
@@ -48,6 +59,11 @@
 
 % Default settings
 \kDtikzset{
+  every object/.style={
+%    /tikz/draw,
+%    /tikz/line width=rule_thickness,
+%    /tikz/commutative diagrams/rightarrow
+},
   every arrow/.style={
 %    /tikz/draw,
 %    /tikz/line width=rule_thickness,
@@ -109,14 +125,13 @@
 
 \def\DrawObject#1\withNode#2\GO%
   {\kDSanitize#1\into SafeName\GO%
-   \message{XXXXX\SafeName XXXXX}
-   \edef\tmp{[name={\SafeName}] #2 {$#1$}}%
+   \edef\tmp{[kD/.cd,every object,(\SafeName),#2] {$#1$}}%
    \expandafter\node\tmp;}
 
 \def\DrawMorphism#1\withNode#2\withEdge#3\from#4\to#5\GO%
   {\kDSanitize#1\into SafeName\GO%
-   \edef\tmp{[kD/every arrow] (#4) edge [#3]
-    node [kD/every label,name={\SafeName}] #2 {$#1$} (#5)}%
+   \edef\tmp{(#4) edge [kD/.cd,every arrow,#3]
+    node [kD/.cd,every label,(\SafeName),#2] {$#1$} (#5)}%
     \expandafter\path\tmp;}
 
 % ============================================================ GENERAL HELPERS =
@@ -132,6 +147,23 @@
       \else\kDCSDef{#3}{##1}\Rimmer##2\GO\fi}%
    \Cutter#1#2\GO}
 
+\def\kDTrisect#1\at#2\into#3\and#4\and#5\GO%
+  {\def\Cut#2##1#2##2#2##3#2##4\GO%
+     {\def\cnt{##4}\def\one{#2}\def\two{#2#2}\def\thr{#2#2#2}
+      \ifx\cnt\one\kDCSDef{#3}{##1}\kDCSDef{#4}{}   \kDCSDef{#5}{}   \else
+      \ifx\cnt\two\kDCSDef{#3}{##2}\kDCSDef{#4}{##1}\kDCSDef{#5}{}   \else
+      \ifx\cnt\thr\kDCSDef{#3}{##3}\kDCSDef{#4}{##2}\kDCSDef{#5}{##1}\else
+      \errmessage{PROBLEMS, YO!}\fi\fi\fi}
+   \Cut#2#1#2#2#2#2\GO}
+
+\def\kDBisect#1\at#2\into#3\and#4\GO%
+  {\def\Cut#2##1#2##2#2##3\GO%
+     {\def\cnt{##3}\def\one{#2}\def\two{#2#2}
+      \ifx\cnt\one\kDCSDef{#3}{##1}\kDCSDef{#4}{}   \else
+      \ifx\cnt\two\kDCSDef{#3}{##2}\kDCSDef{#4}{##1}\else
+      \errmessage{PROBLEMS, YO!}\fi\fi}
+   \Cut#2#1#2#2#2\GO}
+
 % ==================================================================== PARSERS =
 
 \def\ParseMorphism#1\GO%
@@ -144,24 +176,25 @@
 \def\ParseObject#1\GO%
   {\kDSplice#1\at=\into NodeSpec\and MathSpec\GO}
 
+% #1:#2:#3:        #0::dd
+
 % ========================================================== INTERNAL COMMANDS =
 
 \def\DoObject#1\GO%
-  {\ParseObject#1\GO%
-%\show\MathSpec\show\NodeSpec%
+  {\kDBisect#1\at:\into MathSpec\and NodeSpec\GO%
    \DrawObject\MathSpec\withNode\NodeSpec\GO}
 
 \def\DoMorphism #1 #2 #3\GO%
-  {\ParseMorphism#2\GO%
-   \DrawMorphism\MathSpec\withNode\NodeSpec\withEdge{\EdgeSpec}\from#1\to#3\GO}
+  {\kDTrisect#2\at:\into EdgeSpec\and MathSpec\and NodeSpec\GO%
+   \DrawMorphism\MathSpec\withNode\NodeSpec\withEdge\EdgeSpec\from#1\to#3\GO}
 
 \def\DoMorphismChain #1 #2 #3 #4\GO%
   {\DoMorphism {#1} {#2} {#3}\GO%
    \ifx\relax#4\else\DoMorphismChain {#3} #4\GO\fi}
 
 \def\DoMorphismAlt#1: #2 #3 #4\GO%
-  {\ParseMorphismAlt#1\GO%
-   \DrawMorphism\MathSpec\withNode\NodeSpec\withEdge{#3}\from#2\to#4\GO}
+  {\kDBisect#1\at:\into MathSpec\and NodeSpec\GO%
+   \DrawMorphism\MathSpec\withNode\NodeSpec\withEdge#3\from#2\to#4\GO}
 
 \def\DoMorphismAltList #1, #2\GO%
   {\DoMorphismAlt#1\GO%
