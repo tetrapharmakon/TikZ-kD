@@ -1,6 +1,8 @@
-
 \matrix[kD/every matrix]{
  \obj A; & \obj B; \\
+ \obj D; & \obj C; & \obj E; \\
 };
-\mor A f:{bend left},-> B g:^> A;
-\mor f {shorten <=.5em, shorten >=.5em, double distance=1pt, -stealth} g;
+
+\mor A -> B -> C;
+\mor * -> D -> *;
+\mor * ÷> E {bend left},-> *;

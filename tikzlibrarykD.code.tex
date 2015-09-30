@@ -31,8 +31,10 @@
   >/.style={near end},
   /handlers/first char syntax=true,
   /handlers/first char syntax/the character (/.initial=\kDNamingShortcut,
-  sh/.style={transform canvas={shift={($(\tikztostart)!#1!-90:(\tikztotarget)-(\tikztostart)$)}}},
+  shift/.style={transform canvas={shift={($(\tikztostart)!#1!-90:(\tikztotarget)-(\tikztostart)$)}}},
 }
+
+
 
 \def\kDRemoveParens(#1){#1}
 \def\kDNamingShortcut#1{\pgfkeysalso{/tikz/name={\kDRemoveParens#1}}}
@@ -188,9 +190,19 @@
   {\kDTrisect#2\at:\into EdgeSpec\and MathSpec\and NodeSpec\GO%
    \DrawMorphism\MathSpec\withNode\NodeSpec\withEdge\EdgeSpec\from#1\to#3\GO}
 
+\let\kDThisSource\relax \let\kDLastSource\relax
+\let\kDThisTarget\relax \let\kDLastTarget\relax
+\def\kDLast{*}
+
 \def\DoMorphismChain #1 #2 #3 #4\GO%
-  {\DoMorphism {#1} {#2} {#3}\GO%
-   \ifx\relax#4\else\DoMorphismChain {#3} #4\GO\fi}
+  {\def\kDSource{#1}\ifx\kDSource\kDLast\let\kDSource\kDLastSource\fi
+   \def\kDTarget{#3}\ifx\kDTarget\kDLast\let\kDTarget\kDLastTarget\fi
+   \DoMorphism {\kDSource} {#2} {\kDTarget}\GO%
+   \ifx\kDThisSource\relax\let\kDThisSource\kDSource\fi
+   \ifx\relax#4\relax
+   \let\kDLastSource\kDThisSource\let\kDThisSource\relax
+   \let\kDLastTarget\kDTarget
+   \else\DoMorphismChain {#3} #4\GO\fi}
 
 \def\DoMorphismAlt#1: #2 #3 #4\GO%
   {\kDBisect#1\at:\into MathSpec\and NodeSpec\GO%
@@ -205,12 +217,14 @@
 \def\obj#1;{\DoObject #1\GO}
 
 \def\MorChain #1;{\DoMorphismChain #1 \GO}
-\def\MorList* #1;{\DoMorphismAltList #1, \GO}
+%\def\MorList* #1;{\DoMorphismAltList #1, \GO}
 
 
-\def\mor{\futurelet\MaybeStar\MaybeStarredMor}
-\def\MaybeStarredMor{\ifx*\MaybeStar \let\next\MorList
-\else \let\next\MorChain \fi \next}
+%\def\mor{\futurelet\MaybeStar\MaybeStarredMor}
+%\def\MaybeStarredMor{\ifx*\MaybeStar \let\next\MorList
+%\else \let\next\MorChain \fi \next}
+
+\let\mor\MorChain
 
 % ================================================================= ENVIROMENT =
 
