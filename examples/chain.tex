@@ -1,5 +1,6 @@
+\startkD
 
-\def\ob#1\x#2\y#3;{\obj at ({5em*#2,-3em*#3}) =#1;}
+\def\ob#1\x#2\y#3;{\obj at=({5em*#2,-3em*#3}):#1;}
 
 \foreach [count=\m] \a in {A,B,C} {
 \foreach [count=\n] \i in {n-2,n-1,n,n+1,n+2} {
@@ -7,5 +8,7 @@
   \expandafter\ob\name\x\n\y\m;
 }}
 
-%\mor D_{n+3} -> A_{n+0};
+\mor C_{n+1} >-> B_{n-1};
+
+\stopkD
 

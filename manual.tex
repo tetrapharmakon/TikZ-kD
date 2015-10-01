@@ -35,10 +35,6 @@
 \usetikzlibrary[kD]
 \usetikzlibrary[calc]
 
-%\let\RequirePackage\relax
-%\input{tikz-3dplot.sty} % whatever, it seems to work
-
-
 \usetikzlibrary[decorations.markings]
 \usetikzlibrary[arrows.meta]
 
@@ -56,19 +52,15 @@
 
 \def\DoExample#1#2{%
   \title{#1}
-  \framed{
-    \startcommutativediagram
-    \input examples/#2.tex
-    \stopcommutativediagram
-  }
-  \typefile[TEX]{examples/#2.tex}
+  \framed{\input examples/#2 }
+  \typefile[TEX]{examples/#2}
 }
 
 \starttext
 \DoExample{Snake Lemma}{snake_lemma}
 \DoExample{K4 associahedron}{k4_associahedron}
-\DoExample{Square}{square}
-
+\DoExample{K5 associahedron}{k5_associahedron}
+\DoExample{WIP}{chain}
 
 \stoptext
 

@@ -200,7 +200,7 @@
 
 \def\DoMorphism #1 #2 #3\GO%
   {\kDTrisect#2\at:\into EdgeSpec\and MathSpec\and NodeSpec\GO%
-   \DrawMorphism\MathSpec\withNode\NodeSpec\withEdge\EdgeSpec,\kDGLOBOPT\from#1\to#3\GO}
+   \DrawMorphism\MathSpec\withNode\NodeSpec\withEdge\kDGLOBOPT,\EdgeSpec\from#1\to#3\GO}
 
 \let\kDThisSource\relax \let\kDLastSource\relax
 \let\kDThisTarget\relax \let\kDLastTarget\relax

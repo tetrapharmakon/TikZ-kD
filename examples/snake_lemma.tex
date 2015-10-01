@@ -1,3 +1,5 @@
+\startcommutativediagram
+
 \def\coker{{\rm coker}\,}
 
 \matrix[kD/every matrix]{
@@ -21,3 +23,5 @@
 \coordinate (belly) at ($(tail)!0.52!(head)$);
 \draw[kD/.cd,÷>,rounded corners]
   (ker c) -- (tail) -- (tail|-belly) -- (head|-belly) -- (head) -- (coker a);
+
+\stopcommutativediagram
