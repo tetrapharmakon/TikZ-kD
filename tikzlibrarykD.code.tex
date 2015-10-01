@@ -200,7 +200,7 @@
 
 \def\DoMorphism #1 #2 #3\GO%
   {\kDTrisect#2\at:\into EdgeSpec\and MathSpec\and NodeSpec\GO%
-   \DrawMorphism\MathSpec\withNode\NodeSpec\withEdge\EdgeSpec\from#1\to#3\GO}
+   \DrawMorphism\MathSpec\withNode\NodeSpec\withEdge\EdgeSpec,\kDGLOBOPT\from#1\to#3\GO}
 
 \let\kDThisSource\relax \let\kDLastSource\relax
 \let\kDThisTarget\relax \let\kDLastTarget\relax
@@ -220,15 +220,15 @@
 
 \def\obj#1;{\DoObject #1\GO}
 
-\def\MorChain #1;{\DoMorphismChain #1 \GO}
+\def\MorChain #1;{\def\kDGLOBOPT{}\DoMorphismChain #1 \GO}
 
-%\def\MorOpt[#1] #2;{\DoMorphismChain #2, \GO}
-%
-%\def\mor{\let\kDCommonOpt\relax\futurelet\MaybeSquare\MaybeOptMor}
-%\def\MaybeOptMor{\ifx[\MaybeSquare \let\next\MorOpt
-%\else \let\next\MorNoOpt \fi \next}
+\def\MorOpt[#1] #2;{\def\kDGLOBOPT{#1}\DoMorphismChain #2 \GO}
 
-\let\mor\MorChain
+\def\mor{\let\kDCommonOpt\relax\futurelet\MaybeSquare\MaybeOptMor}
+\def\MaybeOptMor{\ifx[\MaybeSquare \let\next\MorOpt
+\else \let\next\MorChain \fi \next}
+
+%\let\mor\MorChain
 
 % ================================================================= ENVIROMENT =
 
