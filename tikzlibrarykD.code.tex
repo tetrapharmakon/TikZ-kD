@@ -22,6 +22,8 @@
 
 \def\kDSet{\pgfqkeys{/tikz/kD}}
 
+\usetikzlibrary{decorations.pathreplacing}
+
 \tikzset{
   kD/.search also={/tikz},
   kD/.cd,
@@ -31,6 +33,26 @@
     {shift={($(\tikztostart)!#1!-90:(\tikztotarget)-(\tikztostart)$)}}},
   slide/.style={transform canvas=
     {shift={($(\tikztostart)!#1!0:(\tikztotarget)-(\tikztostart)$)}}},
+  chop/.style args={#1-#2}{ 
+    decoration={ 
+      show path construction, 
+      curveto code={ 
+        \pgfpathcurvebetweentime{#1}{#2}%
+        {\pgfpointdecoratedinputsegmentfirst}% 
+        {\pgfpointdecoratedinputsegmentsupporta}% 
+        {\pgfpointdecoratedinputsegmentsupportb}% 
+        {\pgfpointdecoratedinputsegmentlast}% 
+      },
+      lineto code={ % kinda raw, this one
+        \pgfpathcurvebetweentime{#1}{#2}%
+        {\pgfpointdecoratedinputsegmentfirst}% 
+        {\pgfpointdecoratedinputsegmentfirst}% 
+        {\pgfpointdecoratedinputsegmentlast}% 
+        {\pgfpointdecoratedinputsegmentlast}% 
+      }
+    }, 
+    decorate 
+  } 
 }
 
 

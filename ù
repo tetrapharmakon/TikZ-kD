@@ -1,0 +1,22 @@
+\input tikz
+
+
+\tikzpicture[to path={
+.. controls +(1,0) and +(1,0) .. (\tikztotarget) \tikztonodes}]
+
+\coordinate (A) at (0,0);
+\coordinate (Z) at (10em,0);
+
+\fill (A) circle (1pt);
+\fill (Z) circle (1pt);
+
+\draw (A) to (Z);
+
+\endtikzpicture
+
+
+\bye
+
+
+
+

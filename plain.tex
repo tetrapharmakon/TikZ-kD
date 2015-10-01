@@ -1,0 +1,93 @@
+\input tikz
+\usetikzlibrary{calc}
+\usetikzlibrary{decorations.pathreplacing}
+
+\tikzpicture[to path={
+($(\tikztostart)!.4!(\tikztotarget)$)--
+($(\tikztostart)!.6!(\tikztotarget)$)
+}]
+
+\node (a) at (0,0) {a};
+\node (b) at (2,1) {b};
+\node (c) at (1,2) {c};
+
+
+
+\draw (a) to node {x} (b)
+(a) to [bend left=20,shorten <=1em]
+(c);
+\endtikzpicture
+
+
+
+
+
+
+
+
+
+\tikzset{ 
+  start time/.initial=0, 
+  end time/.initial=1, 
+  partial curve/.style={ 
+    #1, 
+    decoration={ 
+      show path construction, 
+      curveto code={ 
+        \pgfpathcurvebetweentime%
+        {\pgfkeysvalueof{/tikz/start time}}% 
+        {\pgfkeysvalueof{/tikz/end time}}% 
+        {\pgfpointdecoratedinputsegmentfirst}% 
+        {\pgfpointdecoratedinputsegmentsupporta}% 
+        {\pgfpointdecoratedinputsegmentsupportb}% 
+        {\pgfpointdecoratedinputsegmentlast}% 
+      } 
+    }, 
+    decorate 
+  } ,
+  chop/.style args={#1-#2}{ 
+    decoration={ 
+      show path construction, 
+      curveto code={ 
+        \pgfpathcurvebetweentime{#1}{#2}%
+        {\pgfpointdecoratedinputsegmentfirst}% 
+        {\pgfpointdecoratedinputsegmentsupporta}% 
+        {\pgfpointdecoratedinputsegmentsupportb}% 
+        {\pgfpointdecoratedinputsegmentlast}% 
+      },
+      lineto code={ % kinda raw, this one
+        \pgfpathcurvebetweentime{#1}{#2}%
+        {\pgfpointdecoratedinputsegmentfirst}% 
+        {\pgfpointdecoratedinputsegmentfirst}% 
+        {\pgfpointdecoratedinputsegmentlast}% 
+        {\pgfpointdecoratedinputsegmentlast}% 
+      }
+    }, 
+    decorate 
+  } 
+} 
+
+\tikzpicture
+\draw  (0,0) coordinate (start) 
+        (1,0) coordinate (c1) 
+        (2,-1) coordinate (c2) 
+        (3,0) coordinate (end) 
+        (start) .. controls (c1) and (c2) .. (end) 
+        coordinate[pos=0.5] (mid); 
+\draw [red, ->,
+        ultra thick, double,% -Implies,
+        chop=.3-.8] 
+        (start) -- (end); 
+\endtikzpicture
+
+
+
+
+
+
+
+\bye
+
+
+
+

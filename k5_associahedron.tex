@@ -10,14 +10,14 @@
 -<-/.style={thick,decoration={
   markings,
   mark=at position .5 with {\arrow{Latex[reversed]}}},postaction={decorate}},
-  ≡>/.style={line width=1pt,double distance=3pt,-Implies},
-  dim/.style={black!40!white}
+  ≡>/.style={line width=1pt,double distance=3pt,-Implies,kD/chop=.4-.6},
+  dim/.style={black!40!white,dashed}
 }
 
 
 \begin{document}
 
-\tdplotsetmaincoords{67}{36}
+\tdplotsetmaincoords{64}{36}
 
 \begin{kD}[scale=4,tdplot_main_coords]
 
@@ -42,9 +42,9 @@
   \mor B ->- D ->-,dim C;
   \mor * ->- A ->-,dim *;
 
-  \mor CD -<-,red!40!white
-       CC -<-,red!40!white
-        C -<-,red!40!white
+  \mor CD -<-,dim,red!40!white
+       CC -<-,dim,red!40!white
+        C -<-,dim,red!40!white
         B -<-,red
        BB -<-,red
        AB;
