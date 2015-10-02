@@ -41,7 +41,7 @@
 % ==============================================================================
 
 \setuplayout
-  [grid=yes,
+  [%grid=yes,
    backspace=0.125\paperwidth,width=middle,
    topspace=0.088\paperheight,height=middle,
    header=0bp,footer=0bp]
@@ -52,8 +52,8 @@
 
 \def\DoExample#1#2{%
   \title{#1}
-  \framed{\input examples/#2 }
-  \typefile[TEX]{examples/#2}
+  \framed{\begingroup\input examples/#2 \endgroup}
+  {\tfxx\typefile[TEX]{examples/#2}}
 }
 
 \starttext

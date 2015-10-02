@@ -1,8 +1,8 @@
-\startkD
-
 \def\id{{\mathbf 1}}
 \catcode`ı=\active \letı\id
 \catcode`×=\active \let×\otimes
+
+\startcommutativediagram
 
 \foreach [count=\n] \o in
   {((w×x)×y)×x,
@@ -18,4 +18,4 @@
 \mor *   a_{w×x,y,z}:-> 5
          a_{w,x,y×z}:-> *;
 
-\stopkD
+\stopcommutativediagram

@@ -40,7 +40,7 @@
   \def\sz{sqrt(\phi/2)}
   \def\hz{sqrt(pow(\phi,3)/2)}
   \def\hp{1/2}
-  \rotateRPY{-84}{-16}{-8}
+  \rotateRPY{-80}{-10}{-10}
   \startscope[RPY]
     \foreach \n/\x/\y in {A/-1/-1,B/1/-1,C/-1/1,D/1/1}
       {\coordinate (\n)   at ($0.5*(\x,\y,0)$);
@@ -56,7 +56,7 @@
   \mor CC ·<· AC -<- AA -<- AB;                      % crown, left
   \mor C ·<· D -<- B;                                % floor, right
   \mor * ·<· A -<- *;                                % floor, left
-  \mor[red] CD ·<· CC ·<· C ·<· B -<- BB -<- AB;    % source edge
+  \mor[red] CD ·<· CC ·<· C ·<· B -<- BB -<- AB;     % source edge
   \mor[blue]  * -<-  Y -<- X -<- *;                  % target edge
   \mor BD -<- X; \mor A -<- AA;
   \mor DD -<- D; \mor Y -<- AC;
