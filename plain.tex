@@ -1,0 +1,14 @@
+\input tikz
+\usetikzlibrary[kD]
+
+\tikzset{
+  --->/.style={->,bend left,kD/chop=*|*|*}
+}
+
+\kD
+\obj X;
+\obj at={(10em,0)}:Y;
+\mor X ---> Y;
+\endkD
+
+\bye
