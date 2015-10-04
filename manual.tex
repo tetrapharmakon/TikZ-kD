@@ -1,5 +1,21 @@
+% manual.tex
+%
+% Copyright 2015 by Paolo Brasolin <paolo.brasolin@gmail.com>
+%
+% This program is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-% ############################################################## CONTEXT CHECK #
+% ############################################################ REQUIRE CONTEXT #
 
 \newif\ifConTeXt
 
@@ -29,8 +45,6 @@
 
 % ##############################################################################
 
-% ################################################################ LET'S DANCE #
-
 \usemodule[tikz]
 %\usetikzlibrary[calc]
 
@@ -41,7 +55,7 @@
 % ==============================================================================
 
 \setuplayout
-  [%grid=yes,
+  [grid=yes,
    backspace=0.125\paperwidth,width=middle,
    topspace=0.088\paperheight,height=middle,
    header=0bp,footer=0bp]
@@ -56,22 +70,35 @@
   {\tfxx\typefile[TEX]{examples/#2}}
 }
 
+% ####################################################################### TEXT #
+
 \starttext
+
+
+\section{Anatomy of an arrow}
+
+\startTEX
+\mor[<ARROWSPEC>] <SOURCENAME> <ARROWSPEC> <TARGETNAME>;
+\stopTEX
+
+\subsection{Chopping}
+
+\startTEX
+chop=<MEASURE>|<MEASURE>|<MEASURE>
+\stopTEX
+
+\subsection{Moving}
+
+\startTEX
+slide=<MEASURE>
+shift=<MEASURE>
+\stopTEX
+
 %\DoExample{Snake Lemma}{snake_lemma}
 %\DoExample{K4 associahedron}{k4_associahedron}
 %\DoExample{K5 associahedron}{k5_associahedron}
 %\DoExample{WIP}{chain}
 
-
-\tikzset{/tikz/kD/.cd,BLARGH/.style={chop=0|*|0,->}}
-
-%\show|
-\startkD
-%\show|
-\obj X;
-\obj at={(10em,0)}:Y;
-\mor X BLARGH Y;
-\stopkD
 
 \stoptext
 

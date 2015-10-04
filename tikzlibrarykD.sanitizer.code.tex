@@ -17,16 +17,27 @@
 
 % ################################################################ LET'S DANCE #
 
-\usetikzlibrary[kD.bugfixes]
-\usetikzlibrary[kD.helpers]
+\def\kDSanitize#1\into#2\GO%
+  {\kDMeaningOf#1 \into Meaning\GO% Note I put an extra space for easy parsing
+   \expandafter\def\csname#2\endcsname% and catch it as the empty exception
+     {\ifx\Meaning\space\else\expandafter\kDSieveString\Meaning\GO\fi}}
 
-\usetikzlibrary[kD.balancer]
-\usetikzlibrary[kD.sanitizer]
+\def\kDMeaningOf#1\into#2\GO%
+  {\expandafter\kDSplice\meaning#1\at>\into Trash\and #2\GO}
 
-\usetikzlibrary[decorations.pathreplacing]
+% Note: maybe a switch to preserve/erase spaces would be useful
+\def\kDSieveString#1 #2\GO%
+  {\kDSieveWord#1\GO\ifx\relax#2\else\space\kDSieveString#2\GO\fi}
 
-\usetikzlibrary[kD.core]
+\def\kDSieveWord#1#2\GO%
+  {\kDSieveCharacter#1\ifx\relax#2\else\kDSieveWord#2\GO\fi}
 
-
+% Note: spaces after number avoid stray \relax
+\def\kDSieveCharacter#1%
+  {\ifnum`#1=44 \else% , comma
+   \ifnum`#1=46 \else% . dot
+   \ifnum`#1=58 \else% : colon
+   \ifnum`#1=92 \else% \ backslash
+   #1\fi\fi\fi\fi}
 
 % #################################################################### THE END #
