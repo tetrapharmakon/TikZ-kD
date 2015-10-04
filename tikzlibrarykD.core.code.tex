@@ -1,0 +1,302 @@
+% tikzlibrarykD.code.tex
+%
+% Copyright 2015 by Paolo Brasolin <paolo.brasolin@gmail.com>
+%
+% This program is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+% ################################################################ LET'S DANCE #
+
+
+\usetikzlibrary[decorations.pathreplacing]
+\usetikzlibrary[kD.bugfixes]
+
+% ==================================================================== STYLING =
+
+\def\kDSet{\pgfqkeys{/tikz/kD}}
+
+
+
+\tikzset{
+  kD/.search also={/tikz},
+  kD/.cd,
+  /handlers/first char syntax=true,
+  /handlers/first char syntax/the character (/.initial=\kDNamingShortcut,
+  shift/.style={transform canvas=
+    {shift={($(\tikztostart)!#1!-90:(\tikztotarget)-(\tikztostart)$)}}},
+  slide/.style={transform canvas=
+    {shift={($(\tikztostart)!#1!0:(\tikztotarget)-(\tikztostart)$)}}},
+}
+
+
+\kDSet{
+  ÷/.style={crossing over},
+  ^>/.style={bend left,->},
+  ÷>/.style={÷,->},
+  </.style={near start},
+  >/.style={near end},
+}
+
+\def\kDRemoveParens(#1){#1}
+\def\kDNamingShortcut#1{\pgfkeysalso{/tikz/name={\kDRemoveParens#1}}}
+
+\kDSet{
+%  arrows/.code={\tikzcdset{every arrow/.append style={#1}}},
+%  labels/.code={\tikzcdset{every label/.append style={#1}}},
+%  cells/.code={\tikzcdset{every cell/.append style={#1}}},
+%  diagrams/.code={\tikzcdset{every diagram/.append style={#1}}},
+%  execute before arrows/.code={\expandafter\def\expandafter\tikzcd@before@paths@hook\expandafter{\tikzcd@before@paths@hook#1}},
+  crossing over/.style={
+    /tikz/preaction={
+      /tikz/draw=\pgfkeysvalueof{/tikz/kD/background color},
+      /tikz/arrows=-,
+      /tikz/line width=\pgfkeysvalueof{/tikz/kD/crossing over clearance}}},
+%  cramped/.code={\tikzcdset{
+%    every matrix/.append style={inner sep=+-0.3em},
+%    every cell/.append style={inner sep=+0.3em}}},
+%  row sep/.code={\tikzcd@sep{row}{#1}},
+%  column sep/.code={\tikzcd@sep{column}{#1}},
+%  sep/.code={\tikzcdset{row sep={#1},column sep={#1}}},
+}
+
+
+% Default settings
+\kDSet{
+  every object/.style={
+%    /tikz/draw,
+%    /tikz/line width=rule_thickness,
+%    /tikz/commutative diagrams/rightarrow
+},
+  every arrow/.style={
+%    /tikz/draw,
+%    /tikz/line width=rule_thickness,
+%    /tikz/commutative diagrams/rightarrow
+},
+  every label/.style={
+/tikz/auto,
+%    /tikz/font=\everymath\expandafter{\the\everymath\scriptstyle},
+%/tikz/inner sep=+0.5ex
+},
+  every cell/.style={
+%    /tikz/shape={},
+%    /tikz/inner xsep=+1ex,
+%    /tikz/inner ysep=+0.85ex
+},
+  every matrix/.style={
+    /tikz/inner sep=0.618em,
+    /tikz/row sep=1.618em,
+    /tikz/column sep=2.618em
+},
+  every diagram/.style={
+%    /tikz/commutative diagrams/row sep=normal,
+%    /tikz/commutative diagrams/column sep=normal,
+%    /tikz/baseline=+0pt
+},
+  crossing over clearance/.initial=0.236em,
+  background color/.initial=white
+}
+
+
+% ============================================================ GENERAL HELPERS =
+
+\def\kDCSDef#1#2{\expandafter\def\csname#1\endcsname{#2}}
+
+\def\kDDefStarred#1\with#2\and#3\GO%
+  {\kDCSDef{#1}%
+    {\expandafter\futurelet\expandafter\kDMaybeStar\csname#1Maybe\endcsname}%
+   \kDCSDef{#1Maybe}%
+    {\ifx*\kDMaybeStar\let\next#2\else\let\next#3\fi\next}}
+
+\def\kDGobble#1\with#2\at#3\into#4\GO%
+  {\def\Gobbler##1#3##2\GO{#2##1\GO\ifx##2\relax\else\Gobbler##2\GO\fi}%
+   \kDCSDef{#4}{\Gobbler#1\GO}}
+
+\def\kDFullExpandAfter#1#2{\edef\tmp{#2}\expandafter#1\tmp}
+
+% ========================================================== helpers: BALANCER =
+
+\def\kDBalancerInit#1%
+  {\def\kDBalancerLoose{0}
+   \def\kDBalancerRigid{0}
+   \def\kDBalancerTotal{#1}}
+
+\def\kDBalancerTallyLoose*#1\to#2\GO%
+  {\ifx\relax#1\relax\pgfmathparse{1}\else\pgfmathparse{#1}\fi%
+   \expandafter\edef\csname#2\endcsname{*\pgfmathresult}%
+   \pgfmathsetmacro\kDBalancerLoose{\kDBalancerLoose+\pgfmathresult}}
+\def\kDBalancerTallyRigid#1\to#2\GO%
+  {\ifx\relax#1\relax\pgfmathparse{0}\else\pgfmathparse{#1}\fi%
+   \ifpgfmathunitsdeclared\pgfmathdivide{#1}{\kDBalancerTotal}\fi%
+   \expandafter\pgfmathsetmacro\csname#2\endcsname{\pgfmathresult}%
+   \pgfmathsetlengthmacro\kDBalancerRigid{\kDBalancerRigid+\pgfmathresult}}
+\kDDefStarred kDBalancerTally%
+  \with\kDBalancerTallyLoose%
+   \and\kDBalancerTallyRigid\GO
+
+\def\kDBalancerGaugeLoose*#1\to#2\GO%
+  {\expandafter\pgfmathsetmacro\csname#2\endcsname%
+     {#1*(1-\kDBalancerRigid)/\kDBalancerLoose}}
+\def\kDBalancerGaugeRigid#1\to#2\GO%
+  {\expandafter\pgfmathsetmacro\csname#2\endcsname{#1}}
+\kDDefStarred kDBalancerGauge%
+  \with\kDBalancerGaugeLoose%
+   \and\kDBalancerGaugeRigid\GO
+
+% =========================================================== arrow keys: CHOP =
+
+\def\kDChopParse#1|#2|#3\GO%
+  {\kDBalancerInit\pgfdecoratedpathlength
+   \kDBalancerTally#1\to One\GO
+   \kDBalancerTally#2\to Two\GO
+   \kDBalancerTally#3\to Thr\GO
+   \expandafter\kDBalancerGauge\One\to Fst\GO
+   \expandafter\kDBalancerGauge\Thr\to Lst\GO
+   \pgfmathsetmacro\start{\Fst}
+   \pgfmathsetmacro\stop{1-\Lst}}
+
+\tikzset{kD/chop/.style={ 
+  decoration={ 
+    show path construction, 
+    curveto code={
+      \kDFullExpandAfter\kDChopParse{#1}\GO
+      \pgfpathcurvebetweentime{\start}{\stop}
+      {\pgfpointdecoratedinputsegmentfirst}
+      {\pgfpointdecoratedinputsegmentsupporta}
+      {\pgfpointdecoratedinputsegmentsupportb}
+      {\pgfpointdecoratedinputsegmentlast}},
+    lineto code={ % kinda raw, this one
+      \kDFullExpandAfter\kDChopParse{#1}\GO
+      \pgfpathcurvebetweentime{\start}{\stop}
+      {\pgfpointdecoratedinputsegmentfirst}
+      {\pgfpointdecoratedinputsegmentfirst}
+      {\pgfpointdecoratedinputsegmentlast}
+      {\pgfpointdecoratedinputsegmentlast}}
+  },decorate}}
+
+% ======================================================== NODE NAME GENERATOR =
+
+\def\kDSanitize#1\into#2\GO%
+  {\kDMeaningOf#1 \into Meaning\GO% Note I put an extra space for easy parsing
+   \expandafter\def\csname#2\endcsname% and catch it as the empty exception
+     {\ifx\Meaning\space\else\expandafter\kDSieveString\Meaning\GO\fi}}
+
+\def\kDMeaningOf#1\into#2\GO%
+  {\expandafter\kDSplice\meaning#1\at>\into Trash\and #2\GO}
+
+% Note: maybe a switch to preserve/erase spaces would be useful
+\def\kDSieveString#1 #2\GO%
+  {\kDSieveWord#1\GO\ifx\relax#2\else\space\kDSieveString#2\GO\fi}
+
+\def\kDSieveWord#1#2\GO%
+  {\kDSieveCharacter#1\ifx\relax#2\else\kDSieveWord#2\GO\fi}
+
+% Note: spaces after number avoid stray \relax
+\def\kDSieveCharacter#1%
+  {\ifnum`#1=44 \else% , comma
+   \ifnum`#1=46 \else% . dot
+   \ifnum`#1=58 \else% : colon
+   \ifnum`#1=92 \else% \ backslash
+   #1\fi\fi\fi\fi}
+
+% ========================================================= DRAWING PRIMITIVES =
+
+\def\DrawObject#1\withNode#2\GO%
+  {\kDSanitize#1\into SafeName\GO%
+   \edef\tmp{[kD/.cd,every object,(\SafeName),#2] {$#1$}}%
+   \expandafter\node\tmp;}
+
+\def\DrawMorphism#1\withNode#2\withEdge#3\from#4\to#5\GO%
+  {\kDSanitize#1\into SafeName\GO%
+   \edef\tmp{(#4) edge [kD/.cd,every arrow,#3]
+    node [kD/.cd,every label,(\SafeName),#2] {$#1$} (#5)}%
+    \expandafter\path\tmp;}
+
+% ============================================================ PARSING HELPERS =
+
+\def\kDSplice#1\at#2\into#3\and#4\GO%
+  {\def\Rimmer##1#2\GO{\kDCSDef{#4}{##1}}%
+   \def\Cutter##1#2##2\GO%
+     {\def\snd{##2}\ifx\snd\empty\kDCSDef{#3}{}\kDCSDef{#4}{##1}%
+      \else\kDCSDef{#3}{##1}\Rimmer##2\GO\fi}%
+   \Cutter#1#2\GO}
+
+\def\kDTrisect#1\at#2\into#3\and#4\and#5\GO%
+  {\def\Cut#2##1#2##2#2##3#2##4\GO%
+     {\def\cnt{##4}\def\one{#2}\def\two{#2#2}\def\thr{#2#2#2}
+      \ifx\cnt\one\kDCSDef{#3}{##1}\kDCSDef{#4}{}   \kDCSDef{#5}{}   \else
+      \ifx\cnt\two\kDCSDef{#3}{##2}\kDCSDef{#4}{##1}\kDCSDef{#5}{}   \else
+      \ifx\cnt\thr\kDCSDef{#3}{##3}\kDCSDef{#4}{##2}\kDCSDef{#5}{##1}\else
+      \errmessage{PROBLEMS, YO!}\fi\fi\fi}
+   \Cut#2#1#2#2#2#2\GO}
+
+\def\kDBisect#1\at#2\into#3\and#4\GO%
+  {\def\Cut#2##1#2##2#2##3\GO%
+     {\def\cnt{##3}\def\one{#2}\def\two{#2#2}
+      \ifx\cnt\one\kDCSDef{#3}{##1}\kDCSDef{#4}{}   \else
+      \ifx\cnt\two\kDCSDef{#3}{##2}\kDCSDef{#4}{##1}\else
+      \errmessage{PROBLEMS, YO!}\fi\fi}
+   \Cut#2#1#2#2#2\GO}
+
+% ========================================================== INTERNAL COMMANDS =
+
+\def\DoObject#1\GO%
+  {\kDBisect#1\at:\into MathSpec\and NodeSpec\GO%
+   \DrawObject\MathSpec\withNode\NodeSpec\GO}
+
+\def\DoMorphism #1 #2 #3\GO%
+  {\kDTrisect#2\at:\into EdgeSpec\and MathSpec\and NodeSpec\GO%
+   \DrawMorphism\MathSpec\withNode\NodeSpec\withEdge\kDGLOBOPT,\EdgeSpec\from#1\to#3\GO}
+
+\let\kDThisSource\relax \let\kDLastSource\relax
+\let\kDThisTarget\relax \let\kDLastTarget\relax
+\def\kDLast{*}
+
+\def\DoMorphismChain #1 #2 #3 #4\GO%
+  {\def\kDSource{#1}\ifx\kDSource\kDLast\let\kDSource\kDLastSource\fi
+   \def\kDTarget{#3}\ifx\kDTarget\kDLast\let\kDTarget\kDLastTarget\fi
+   \DoMorphism {\kDSource} {#2} {\kDTarget}\GO%
+   \ifx\kDThisSource\relax\let\kDThisSource\kDSource\fi
+   \ifx\relax#4\relax
+   \let\kDLastSource\kDThisSource\let\kDThisSource\relax
+   \let\kDLastTarget\kDTarget
+   \else\DoMorphismChain {#3} #4\GO\fi}
+
+% ============================================================= USER INTERFACE =
+
+\def\obj#1;{\DoObject #1\GO}
+
+\def\MorChain #1;{\def\kDGLOBOPT{}\DoMorphismChain #1 \GO}
+
+\def\MorOpt[#1] #2;{\def\kDGLOBOPT{#1}\DoMorphismChain #2 \GO}
+
+\def\mor{\let\kDCommonOpt\relax\futurelet\MaybeSquare\MaybeOptMor}
+\def\MaybeOptMor{\ifx[\MaybeSquare \let\next\MorOpt
+\else \let\next\MorChain \fi \next}
+
+%\let\mor\MorChain
+
+% ================================================================= ENVIROMENT =
+
+% (La)TeX
+\def\kD{\tikzpicture}
+\def\endkD{\endtikzpicture}
+\let\commutativediagram\kD
+\let\endcommutativediagram\endkD
+
+% ConTeXt
+\def\startkD{\starttikzpicture}
+\def\stopkD{\stoptikzpicture}
+\let\startcommutativediagram\startkD
+\let\stopcommutativediagram\stopkD
+
+% #################################################################### THE END #

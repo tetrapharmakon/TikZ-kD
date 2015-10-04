@@ -32,11 +32,11 @@
 % ################################################################ LET'S DANCE #
 
 \usemodule[tikz]
-\usetikzlibrary[kD]
-\usetikzlibrary[calc]
+%\usetikzlibrary[calc]
 
-\usetikzlibrary[decorations.markings]
-\usetikzlibrary[arrows.meta]
+%\usetikzlibrary[decorations.markings]
+%\usetikzlibrary[arrows.meta]
+\usetikzlibrary[kD]
 
 % ==============================================================================
 
@@ -57,10 +57,21 @@
 }
 
 \starttext
-\DoExample{Snake Lemma}{snake_lemma}
-\DoExample{K4 associahedron}{k4_associahedron}
-\DoExample{K5 associahedron}{k5_associahedron}
-\DoExample{WIP}{chain}
+%\DoExample{Snake Lemma}{snake_lemma}
+%\DoExample{K4 associahedron}{k4_associahedron}
+%\DoExample{K5 associahedron}{k5_associahedron}
+%\DoExample{WIP}{chain}
+
+
+\tikzset{/tikz/kD/.cd,BLARGH/.style={chop=0|*|0,->}}
+
+%\show|
+\startkD
+%\show|
+\obj X;
+\obj at={(10em,0)}:Y;
+\mor X BLARGH Y;
+\stopkD
 
 \stoptext
 
