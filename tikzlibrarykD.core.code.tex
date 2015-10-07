@@ -137,16 +137,13 @@
 
 % ========================================================= DRAWING PRIMITIVES =
 
-\def\DrawObject#1\withNode#2\GO%
-  {\kDSanitize#1\into SafeName\GO%
-   \edef\tmp{[kD/.cd,every object,(\SafeName),#2] {$#1$}}%
-   \expandafter\node\tmp;}
+\def\kDObject#1\withNode#2\GO%
+  {\node[kD/.cd, every object, self naming node, node contents={$#1$}, #2];}
 
-\def\DrawMorphism#1\withNode#2\withEdge#3\from#4\to#5\GO%
-  {\kDSanitize#1\into SafeName\GO%
-   \edef\tmp{(#4) edge [kD/.cd,every arrow,#3]
-    node [kD/.cd,every label,(\SafeName),#2] {$#1$} (#5)}%
-    \expandafter\path\tmp;}
+\def\kDMorphism#1\withNode#2\withEdge#3\from#4\to#5\GO%
+  {\path (#4) edge [kD/.cd, every arrow, #3,
+              edge node={node [kD/.cd, every label, self naming node, node contents={$#1$}, #2]}]
+         (#5);}
 
 % ============================================================ PARSING HELPERS =
 
@@ -176,13 +173,12 @@
 
 % ========================================================== INTERNAL COMMANDS =
 
-\def\DoObject#1\GO%
-  {\kDBisect#1\at:\into MathSpec\and NodeSpec\GO%
-   \DrawObject\MathSpec\withNode\NodeSpec\GO}
-
 \def\DoMorphism #1 #2 #3\GO%
   {\kDTrisect#2\at:\into EdgeSpec\and MathSpec\and NodeSpec\GO%
-   \DrawMorphism\MathSpec\withNode\NodeSpec\withEdge\kDGLOBOPT,\EdgeSpec\from#1\to#3\GO}
+   \expandafter\expandafter\expandafter\expandafter\expandafter\expandafter%
+   \expandafter\kDMorphism\expandafter\expandafter\expandafter\MathSpec%
+   \expandafter\expandafter\expandafter\withNode\expandafter\NodeSpec%
+   \expandafter\withEdge\EdgeSpec\from#1\to#3\GO}
 
 \let\kDThisSource\relax \let\kDLastSource\relax
 \let\kDThisTarget\relax \let\kDLastTarget\relax
@@ -200,7 +196,10 @@
 
 % ============================================================= USER INTERFACE =
 
-\def\obj#1;{\DoObject #1\GO}
+\def\obj#1;%
+  {\kDBisect#1\at:\into MathSpec\and NodeSpec\GO%
+   \expandafter\expandafter\expandafter\kDObject%
+   \expandafter\MathSpec\expandafter\withNode\NodeSpec\GO}
 
 \def\MorChain #1;{\def\kDGLOBOPT{}\DoMorphismChain #1 \GO}
 

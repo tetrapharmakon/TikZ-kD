@@ -5,12 +5,12 @@
 \startcommutativediagram
 
 \foreach [count=\n] \o in
-  {((w×x)×y)×x,
-   (w×(x×y))×x,
-   w×((x×y)×x),
-   w×(x×(y×x)),
-   (w×x)×(y×x)}
-  \obj at=({72*\n:9em}),(\n):\o{};
+    {((w×x)×y)×x,
+     (w×(x×y))×x,
+     w×((x×y)×x),
+     w×(x×(y×x)),
+     (w×x)×(y×x)}
+  \obj at=({72*\n:9em}),name=\n: \o;
 
 \mor 1 a_{w,x,y}×ı_z:-> 2
          a_{w,x×y,z}:-> 3
