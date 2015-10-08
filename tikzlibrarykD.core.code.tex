@@ -17,91 +17,85 @@
 
 % ################################################################ LET'S DANCE #
 
+\usetikzlibrary{decorations.pathmorphing}
 
+\usetikzlibrary[decorations.markings]
+\usetikzlibrary[arrows.meta]
 
 % ==================================================================== STYLING =
 
-\def\kDSet{\pgfqkeys{/tikz/kD}}
+\def\kDRemoveParens(#1){#1}
+\def\kDNamingShortcut#1{\pgfkeysalso{/tikz/name={\kDRemoveParens#1}}}
 
-
-
-\tikzset{
-  kD/.search also={/tikz},
-  kD/.cd,
+% Default settings
+\pgfqkeys{/kD}{
+  .search also={/tikz},
   /handlers/first char syntax=true,
   /handlers/first char syntax/the character (/.initial=\kDNamingShortcut,
   shift/.style={transform canvas=
     {shift={($(\tikztostart)!#1!-90:(\tikztotarget)-(\tikztostart)$)}}},
   slide/.style={transform canvas=
     {shift={($(\tikztostart)!#1!0:(\tikztotarget)-(\tikztostart)$)}}},
-}
-
-
-\kDSet{
-  ÷/.style={crossing over},
-  ^>/.style={bend left,->},
-  ÷>/.style={÷,->},
-  </.style={near start},
-  >/.style={near end},
-}
-
-\def\kDRemoveParens(#1){#1}
-\def\kDNamingShortcut#1{\pgfkeysalso{/tikz/name={\kDRemoveParens#1}}}
-
-\kDSet{
-%  arrows/.code={\tikzcdset{every arrow/.append style={#1}}},
-%  labels/.code={\tikzcdset{every label/.append style={#1}}},
-%  cells/.code={\tikzcdset{every cell/.append style={#1}}},
-%  diagrams/.code={\tikzcdset{every diagram/.append style={#1}}},
-%  execute before arrows/.code={\expandafter\def\expandafter\tikzcd@before@paths@hook\expandafter{\tikzcd@before@paths@hook#1}},
-  crossing over/.style={
-    /tikz/preaction={
-      /tikz/draw=\pgfkeysvalueof{/tikz/kD/background color},
-      /tikz/arrows=-,
-      /tikz/line width=\pgfkeysvalueof{/tikz/kD/crossing over clearance}}},
-%  cramped/.code={\tikzcdset{
-%    every matrix/.append style={inner sep=+-0.3em},
-%    every cell/.append style={inner sep=+0.3em}}},
-%  row sep/.code={\tikzcd@sep{row}{#1}},
-%  column sep/.code={\tikzcd@sep{column}{#1}},
-%  sep/.code={\tikzcdset{row sep={#1},column sep={#1}}},
-}
-
-
-% Default settings
-\kDSet{
   every object/.style={
-%    /tikz/draw,
-%    /tikz/line width=rule_thickness,
-%    /tikz/commutative diagrams/rightarrow
-},
+    /kD/objects/.cd,
+    self naming node,
+  },
   every arrow/.style={
-%    /tikz/draw,
-%    /tikz/line width=rule_thickness,
-%    /tikz/commutative diagrams/rightarrow
-},
+    /kD/arrows/.cd,
+    /kD/current chain/arrows,
+  },
   every label/.style={
-/tikz/auto,
-%    /tikz/font=\everymath\expandafter{\the\everymath\scriptstyle},
-%/tikz/inner sep=+0.5ex
-},
-  every cell/.style={
-%    /tikz/shape={},
-%    /tikz/inner xsep=+1ex,
-%    /tikz/inner ysep=+0.85ex
-},
+    self naming node,
+    auto,
+    font=\everymath\expandafter{\the\everymath\scriptstyle},
+    inner sep=+0.5ex,
+    /kD/labels/.cd,
+    /kD/current chain/labels,
+  },
+  every cell/.style={},
   every matrix/.style={
-    /tikz/inner sep=0.618em,
-    /tikz/row sep=1.618em,
-    /tikz/column sep=2.618em
-},
-  every diagram/.style={
-%    /tikz/commutative diagrams/row sep=normal,
-%    /tikz/commutative diagrams/column sep=normal,
-%    /tikz/baseline=+0pt
-},
-  crossing over clearance/.initial=0.236em,
-  background color/.initial=white
+    /kD/matrices/.cd,
+  },
+  every diagram/.style={},
+  /kD/arrows/.cd,
+    ->/.style={-Stealth},
+    .search also={/tikz},
+  /kD/matrices/.cd,
+    .search also={/tikz},
+    comb/.style={
+      /tikz/row sep={sqrt(3/4)*#1,between origins},
+      /tikz/column sep={#1,between origins},
+      /tikz/every even row/.style={xshift=-0.5*#1},},
+    comb/.default=4em,
+    mesh/.style={
+      /tikz/row sep={#1,between origins},
+      /tikz/column sep={#1,between origins},},
+    mesh/.default=4em,
+    gold/.style={
+      /tikz/row sep=#1,
+      /tikz/column sep=1.618*#1,},
+    gold/.default=1.618em,
+  /kD/objects/.cd,
+    .search also={/tikz},
+  /kD/labels/.cd,
+    .search also={/tikz},
+    mid/.style={inner sep=1.5pt,shape=circle,fill=white,anchor=center},
+    </.style={near start},
+    >/.style={near end},
+  /kD/current chain/.style={},
+  /kD/current chain/arrows/.style={},
+  /kD/current chain/labels/.style={},
+}
+
+\pgfqkeys{/kD/arrows}{
+  .search also={/tikz},
+  crossing over/.style={preaction={-,
+    draw=\pgfkeysvalueof{/kD/arrows/crossing over/color},
+    line width=\pgfkeysvalueof{/kD/arrows/crossing over/clearance},},},
+  crossing over/clearance/.initial=0.236em,
+  crossing over/color/.initial=white,
+  ÷/.style={crossing over},
+  ÷>/.style={÷,->},
 }
 
 % =========================================================== arrow keys: CHOP =
@@ -135,16 +129,6 @@
       {\pgfpointdecoratedinputsegmentlast}}
   },decorate}}
 
-% ========================================================= DRAWING PRIMITIVES =
-
-\def\kDObject#1\withNode#2\GO%
-  {\node[kD/.cd, every object, self naming node, node contents={$#1$}, #2];}
-
-\def\kDMorphism#1\withNode#2\withEdge#3\from#4\to#5\GO%
-  {\path (#4) edge [kD/.cd, every arrow, #3,
-              edge node={node [kD/.cd, every label, self naming node, node contents={$#1$}, #2]}]
-         (#5);}
-
 % ============================================================ PARSING HELPERS =
 
 \def\kDSplice#1\at#2\into#3\and#4\GO%
@@ -171,45 +155,72 @@
       \errmessage{PROBLEMS, YO!}\fi\fi}
    \Cut#2#1#2#2#2\GO}
 
-% ========================================================== INTERNAL COMMANDS =
+% ========================================================= DRAWING PRIMITIVES =
 
-\def\DoMorphism #1 #2 #3\GO%
+\def\kDObject#1\withNode#2\GO%
+  {\node[/kD/every object, node contents={$#1$}, #2];}
+
+\def\kDMorphism#1\withNode#2\withEdge#3\from#4\to#5\GO%
+  {\path (#4) edge [/kD/every arrow, #3, edge node={
+              node [/kD/every label, node contents={$#1$}, #2]}] (#5);}
+
+% ========================================================== PARAMETER PARSING =
+
+\def\kDDoObject#1\GO%
+  {\kDBisect#1\at:\into MathSpec\and NodeSpec\GO%
+   \expandafter\expandafter\expandafter\kDObject%
+   \expandafter\MathSpec\expandafter\withNode\NodeSpec\GO}
+
+\def\kDDoMorphism#1 #2 #3\GO%
   {\kDTrisect#2\at:\into EdgeSpec\and MathSpec\and NodeSpec\GO%
-   \expandafter\expandafter\expandafter\expandafter\expandafter\expandafter%
-   \expandafter\kDMorphism\expandafter\expandafter\expandafter\MathSpec%
-   \expandafter\expandafter\expandafter\withNode\expandafter\NodeSpec%
+   \def\tmp{\NodeSpec,\kDChainOptions} % ------------------------------------------ WARNING, THIS WON'T WORK
+   \expandafter\expandafter\expandafter%
+   \expandafter\expandafter\expandafter%
+   \expandafter\kDMorphism\expandafter%
+   \expandafter\expandafter\MathSpec%
+   \expandafter\expandafter\expandafter%
+   \withNode\expandafter\NodeSpec%
    \expandafter\withEdge\EdgeSpec\from#1\to#3\GO}
 
 \let\kDThisSource\relax \let\kDLastSource\relax
 \let\kDThisTarget\relax \let\kDLastTarget\relax
 \def\kDLast{*}
 
-\def\DoMorphismChain #1 #2 #3 #4\GO%
+\def\kDDoMorphismChain#1 #2 #3 #4\GO%
   {\def\kDSource{#1}\ifx\kDSource\kDLast\let\kDSource\kDLastSource\fi
    \def\kDTarget{#3}\ifx\kDTarget\kDLast\let\kDTarget\kDLastTarget\fi
-   \DoMorphism {\kDSource} {#2} {\kDTarget}\GO%
+   \kDDoMorphism{\kDSource} {#2} {\kDTarget}\GO%
    \ifx\kDThisSource\relax\let\kDThisSource\kDSource\fi
    \ifx\relax#4\relax
    \let\kDLastSource\kDThisSource\let\kDThisSource\relax
    \let\kDLastTarget\kDTarget
-   \else\DoMorphismChain {#3} #4\GO\fi}
+   \else\kDDoMorphismChain{#3} #4\GO\fi}
 
 % ============================================================= USER INTERFACE =
 
 \def\obj#1;%
-  {\kDBisect#1\at:\into MathSpec\and NodeSpec\GO%
-   \expandafter\expandafter\expandafter\kDObject%
-   \expandafter\MathSpec\expandafter\withNode\NodeSpec\GO}
+  {\kDDoObject#1\GO}
 
-\def\MorChain #1;{\def\kDGLOBOPT{}\DoMorphismChain #1 \GO}
+\def\kDChainOptions{}
 
-\def\MorOpt[#1] #2;{\def\kDGLOBOPT{#1}\DoMorphismChain #2 \GO}
+\def\MorChain #1;{%
+  \pgfkeys{/kD/current chain/arrows/.style={}}%
+  \pgfkeys{/kD/current chain/labels/.style={}}%
+  \kDDoMorphismChain #1 \GO}
+\def\MorOpt[#1] #2;{%
+  \kDBisect#1\at:\into ArrowSpec\and LabelSpec\GO%
+  \pgfkeys{/kD/current chain/arrows/.estyle=\ArrowSpec}%
+  \pgfkeys{/kD/current chain/labels/.estyle=\LabelSpec}%
+  \kDDoMorphismChain #2 \GO}
 
 \def\mor{\let\kDCommonOpt\relax\futurelet\MaybeSquare\MaybeOptMor}
 \def\MaybeOptMor{\ifx[\MaybeSquare \let\next\MorOpt
 \else \let\next\MorChain \fi \next}
 
-%\let\mor\MorChain
+
+
+\def\lattice[#1]{\matrix[/kD/every matrix,#1]}
+
 
 % ================================================================= ENVIROMENT =
 

@@ -2,7 +2,7 @@
 
 \startcommutativediagram
 
-\matrix[kD/every matrix]{
+\lattice[gold]{
             & \obj \ker a;   & \obj \ker b;   & \obj \ker c;   \\
             & \obj A;        & \obj B;        & \obj C;        & \obj 0; \\
 \obj(0'):0; & \obj A';       & \obj B';       & \obj C';       \\
@@ -21,7 +21,7 @@
 \coordinate (tail) at ($(ker b)!2!(ker c)$);
 \coordinate (head) at ($(coker b)!2!(coker a)$);
 \coordinate (belly) at ($(tail)!0.52!(head)$);
-\draw[kD/.cd,÷>,rounded corners]
+\draw[/kD/arrows/.cd,÷>,rounded corners]
   (ker c) -- (tail) -- (tail|-belly) -- (head|-belly) -- (head) -- (coker a);
 
 \stopcommutativediagram

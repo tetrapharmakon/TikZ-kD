@@ -24,7 +24,7 @@
     \ifnamegeneratorexpands\edef\tmp{#1}\else\def\tmp{#1}\fi
     \expandafter\kDSanitize\tmp\into SafeName\GO
     \edef\tmp{\SafeName}
-    \message{XXXXXXXXXXXXXXXXXXXX\tmp XXXXXXXXXXXXXXXXXXXXXXXXXXX}
+    \message{New safename: from "#1" to "\tmp".}
     \pgfkeys{/tikz/name/.expanded={\SafeName}}
 },
   /tikz/self naming node/.style={
