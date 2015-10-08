@@ -29,39 +29,34 @@
 
 % Default settings
 \pgfqkeys{/kD}{
-  .search also={/tikz},
-  /handlers/first char syntax=true,
-  /handlers/first char syntax/the character (/.initial=\kDNamingShortcut,
-  shift/.style={transform canvas=
-    {shift={($(\tikztostart)!#1!-90:(\tikztotarget)-(\tikztostart)$)}}},
-  slide/.style={transform canvas=
-    {shift={($(\tikztostart)!#1!0:(\tikztotarget)-(\tikztostart)$)}}},
-  every object/.style={
-    /kD/objects/.cd,
-    self naming node,
-  },
-  every arrow/.style={
-    /kD/arrows/.cd,
-    /kD/current chain/arrows,
-  },
-  every label/.style={
+  .search also=/tikz,
+  objects/.search also=/tikz,
+  arrows/.search also=/tikz,
+  labels/.search also=/tikz,
+  matrices/.search also=/tikz,
+  every object/.style={/kD/objects/.cd},
+  every arrow/.style={/kD/arrows/.cd},
+  every label/.style={/kD/labels/.cd},
+  every matrix/.style={/kD/matrices/.cd},
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  current chain/.style={},
+  current chain/arrows/.style={},
+  current chain/labels/.style={},
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  every object/.append style={
+    self naming node,},
+  every arrow/.append style={
+    /kD/current chain/arrows,},
+  every label/.append style={
     self naming node,
     auto,
     font=\everymath\expandafter{\the\everymath\scriptstyle},
     inner sep=+0.5ex,
-    /kD/labels/.cd,
-    /kD/current chain/labels,
-  },
-  every cell/.style={},
-  every matrix/.style={
-    /kD/matrices/.cd,
-  },
-  every diagram/.style={},
+    /kD/current chain/labels,},
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   /kD/arrows/.cd,
     ->/.style={-Stealth},
-    .search also={/tikz},
   /kD/matrices/.cd,
-    .search also={/tikz},
     comb/.style={
       /tikz/row sep={sqrt(3/4)*#1,between origins},
       /tikz/column sep={#1,between origins},
@@ -75,28 +70,27 @@
       /tikz/row sep=#1,
       /tikz/column sep=1.618*#1,},
     gold/.default=1.618em,
-  /kD/objects/.cd,
-    .search also={/tikz},
+  /kD/arrows/.cd,
+    crossing over/.style={preaction={-,
+      draw=\pgfkeysvalueof{/kD/arrows/crossing over/color},
+      line width=\pgfkeysvalueof{/kD/arrows/crossing over/clearance},},},
+    crossing over/clearance/.initial=0.236em,
+    crossing over/color/.initial=white,
+    ÷/.style={crossing over},
+    ÷>/.style={÷,->},
+    shift/.style={transform canvas=
+      {shift={($(\tikztostart)!#1!-90:(\tikztotarget)-(\tikztostart)$)}}},
+    slide/.style={transform canvas=
+      {shift={($(\tikztostart)!#1!0:(\tikztotarget)-(\tikztostart)$)}}},
   /kD/labels/.cd,
-    .search also={/tikz},
     mid/.style={inner sep=1.5pt,shape=circle,fill=white,anchor=center},
     </.style={near start},
     >/.style={near end},
-  /kD/current chain/.style={},
-  /kD/current chain/arrows/.style={},
-  /kD/current chain/labels/.style={},
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  /handlers/first char syntax=true,
+  /handlers/first char syntax/the character (/.initial=\kDNamingShortcut,
 }
 
-\pgfqkeys{/kD/arrows}{
-  .search also={/tikz},
-  crossing over/.style={preaction={-,
-    draw=\pgfkeysvalueof{/kD/arrows/crossing over/color},
-    line width=\pgfkeysvalueof{/kD/arrows/crossing over/clearance},},},
-  crossing over/clearance/.initial=0.236em,
-  crossing over/color/.initial=white,
-  ÷/.style={crossing over},
-  ÷>/.style={÷,->},
-}
 
 % =========================================================== arrow keys: CHOP =
 
