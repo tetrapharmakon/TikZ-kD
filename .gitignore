@@ -7,6 +7,3 @@
 
 # Vim
 *.swp
-
-# Local testing
-*TMP*
