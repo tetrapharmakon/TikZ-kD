@@ -1,95 +1,20 @@
 \input tikz
 
-\def\pgfmathformatquaternion#1#2#3#4%
-  {\def\pgfmathresult{#1,#2,#3,#4}}
+\usetikzlibrary[dD]
 
-\def\pgfmathformatvector#1#2#3%
-  {\def\pgfmathresult{#1,#2,#3}}
-
-\def\pgfmathformatpoint#1#2%
-  {\def\pgfmathresult{#1,#2}}
-
-\def\pgfmathquaternionimaginarypart#1%
-  {\pgfmathparse{#1[1],#1[2],#1[3]}%
-   \expandafter\pgfmathformatvector\pgfmathresult}
-
-\def\pgfmathmultiplyquaternions#1#2%
-  {\pgfmathparse{#1[0]*#2[0]-#1[1]*#2[1]-#1[2]*#2[2]-#1[3]*#2[3],
-                 #1[0]*#2[1]+#1[1]*#2[0]+#1[2]*#2[3]-#1[3]*#2[2],
-                 #1[0]*#2[2]-#1[1]*#2[3]+#1[2]*#2[0]+#1[3]*#2[1],
-                 #1[0]*#2[3]+#1[1]*#2[2]-#1[2]*#2[1]-#1[3]*#2[0]}
-   \expandafter\pgfmathformatquaternion\pgfmathresult}
-
-\def\pgfmathsubtractquaternions#1#2%
-  {\pgfmathparse{#1[0]-#2[0],#1[1]-#2[1],#1[2]-#2[2],#1[3]-#2[3]}%
-   \expandafter\pgfmathformatquaternion\pgfmathresult}
-
-\def\pgfmathinvertunitquaternion#1%
-  {\pgfmathparse{{#1[0],-#1[1],-#1[2],-#1[3]}}}
-
-\def\pgfmathperspectiveprojection#1#2#3%
-  {\pgfmathparse{0.5*#3[0]*cot(#2)*#1[1]/#1[3],0.5*#3[1]*cot(#2)*#1[2]/#1[3]}%
-   \expandafter\pgfmathformatpoint\pgfmathresult}
-
-\def\pgfmathconjugatebyunitquaternion#1#2%
-  {\pgfmathinvertunitquaternion{#2}%
-   \pgfmathmultiplyquaternions{#1}{\pgfmathresult}%
-   \pgfmathmultiplyquaternions{#2}{\pgfmathresult}}
-
-\def\pgfmathunitquaternionfromangleandversor#1#2% should be normalized to counter finite precision
-  {\pgfmathparse{cos(#1/2),#2[0]*sin(#1/2),#2[1]*sin(#1/2),#2[2]*sin(#1/2)}%
-   \expandafter\pgfmathformatquaternion\pgfmathresult}
-
-\pgfqkeys{/3d}{
-  camera/.cd,
-  fov/.estore in=\camerafov, fov=35,
-  viewport/.estore in=\cameraviewport, viewport={300pt,300pt},
-  quaternion/.estore in=\cameraquaternion, quaternion={1,0,0,0},
-  position/.estore in=\cameraposition, position={50,40,-60},
-  apply/.code={
-    \pgfmathmultiplyquaternions{{#1}}{{\cameraquaternion}}
-    \pgfqkeys{/3d/camera}{quaternion=\pgfmathresult}},
-  rotate/.code args={by #1 around #2}{
-    \pgfmathunitquaternionfromangleandversor{#1}{{#2}}
-    \pgfqkeys{/3d/camera}{apply=\pgfmathresult}},
-  rotate x/.style={rotate=by #1 around {1,0,0}},
-  rotate y/.style={rotate=by #1 around {0,1,0}},
-  rotate z/.style={rotate=by #1 around {0,0,1}},
-  /3d/input/.code={
-    \pgfmathsubtractquaternions{{0,#1}}{{0,\cameraposition}}
-    \pgfmathmultiplyquaternions{{\cameraquaternion}}{{\pgfmathresult}}
-    \pgfmathperspectiveprojection{{\pgfmathresult}}{\camerafov}{{\cameraviewport}}
-    \pgfqkeys{/3d}{output/.expand once=\pgfmathresult}
-},
-  /3d/output/.initial={0,0,0},
-  rotate x=-20,
-  rotate y=30,
-}
-
-\def\decompose#1,#2\relax{\def\X{#1}\def\Y{#2}}
-
-\tikzdeclarecoordinatesystem{3d}%
-{%
-\pgfqkeys{/3d}{input={#1}}
-\pgfqkeys{/3d}{output/.get=\out}
-\expandafter\decompose\out\relax
-\pgfpoint{\X}{\Y}
-}
-
-\tikzpicture[x=1pt,y=1pt]
-\draw (-150pt,-150pt) rectangle (150pt,150pt);
-\fill[purple] circle (2pt);
+\tikzpicture[/3d/camera/.cd,
+  position={11,11,-11},
+  field of view=40,
+  viewport={draw,clip},
+  rotate/x=-45,
+  rotate/y=45,]
 \draw[->,red] (3d cs:0,0,0)--(3d cs:10,0,0);
 \draw[->,green] (3d cs:0,0,0)--(3d cs:0,10,0);
 \draw[->,blue] (3d cs:0,0,0)--(3d cs:0,0,10);
-\fill (3d cs: 10, 10, 10) circle (1pt);
-\fill (3d cs:-10,-10, 10) circle (1pt);
-\fill (3d cs:-10, 10, 10) circle (1pt);
-\fill (3d cs: 10,-10, 10) circle (1pt);
-\fill (3d cs: 10, 10,-10) circle (1pt);
-\fill (3d cs:-10,-10,-10) circle (1pt);
-\fill (3d cs:-10, 10,-10) circle (1pt);
-\fill (3d cs: 10,-10,-10) circle (1pt);
+\foreach \x in {0,5,10}
+\foreach \y in {0,5,10}
+\foreach \z in {0,5,10}
+\fill (3d cs: \x, \y, \z) circle (1pt);
 \endtikzpicture
 
 \bye

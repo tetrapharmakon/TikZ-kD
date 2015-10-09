@@ -15,65 +15,46 @@ dashed,thin
 },
 }
 
-% http://tex.stackexchange.com/a/67588/82186 <3 Tom Bombadil
-\def\rotateRPY#1#2#3%
-  {% eat up roll, pitch and yaw
-   \pgfmathsetmacro{\R}{#1}
-   \pgfmathsetmacro{\P}{#2}
-   \pgfmathsetmacro{\Y}{#3}
-   % transform x,y and z versors
-   \pgfmathsetmacro{\newxx}{cos(\Y)*cos(\P)}
-   \pgfmathsetmacro{\newxy}{sin(\Y)*cos(\P)}
-   \pgfmathsetmacro{\newxz}{-sin(\P)}
-   \pgfmathsetmacro{\newyx}{cos(\Y)*sin(\P)*sin(\R)-sin(\Y)*cos(\R)}
-   \pgfmathsetmacro{\newyy}{sin(\Y)*sin(\P)*sin(\R)+cos(\Y)*cos(\R)}
-   \pgfmathsetmacro{\newyz}{cos(\P)*sin(\R)}
-   \pgfmathsetmacro{\newzx}{cos(\Y)*sin(\P)*cos(\R)+sin(\Y)*sin(\R)}
-   \pgfmathsetmacro{\newzy}{sin(\Y)*sin(\P)*cos(\R)-cos(\Y)*sin(\R)}
-   \pgfmathsetmacro{\newzz}{cos(\P)*cos(\R)}
-   % compute their projections
-   \path (\newxx,\newxy,\newxz); \pgfgetlastxy{\nxx}{\nxy};
-   \path (\newyx,\newyy,\newyz); \pgfgetlastxy{\nyx}{\nyy};
-   \path (\newzx,\newzy,\newzz); \pgfgetlastxy{\nzx}{\nzy};}
+\usetikzlibrary[dD]
 
-\tikzset{RPY/.style={x={(\nxx,\nxy)},y={(\nyx,\nyy)},z={(\nzx,\nzy)}}}
-
-\starttikzpicture[scale=2]
+\starttikzpicture[/3d/camera/.cd,
+  position={2,2,-2},
+  field of view=40,
+  viewport={draw},
+  rotate/x=90,
+  rotate/y=1,
+]
   \def\phi{(1+sqrt(5))/2}
-  \def\sp{1/(\phi*2)}
-  \def\sz{sqrt(\phi/2)}
-  \def\hz{sqrt(pow(\phi,3)/2)}
-  \def\hp{1/2}
-  \rotateRPY{-72}{-12}{-9}
-%  \draw[red] (0,0,0)--(1,0,0);
-%  \draw[green] (0,0,0)--(0,1,0);
-%  \draw[blue] (0,0,0)--(0,0,1);
-  \startscope[RPY]
-%  \draw[ultra thick,red] (0,0,0)--(1,0,0);
-%  \draw[ultra thick,green] (0,0,0)--(0,1,0);
-%  \draw[ultra thick,blue] (0,0,0)--(0,0,1);
-%  \draw ( 0.5, 0.5,0)--(-0.5, 0.5,0)--(-0.5,-0.5,0)--( 0.5,-0.5,0)--cycle;
-%  \draw ( 0.5, 0.5,1)--(-0.5, 0.5,1)--(-0.5,-0.5,1)--( 0.5,-0.5,1)--cycle;
+  \pgfmathsetmacro\sp{1/(\phi*2)}
+  \pgfmathsetmacro\sz{sqrt(\phi/2)}
+  \pgfmathsetmacro\hz{sqrt(pow(\phi,3)/2)}
+  \pgfmathsetmacro\hp{1/2}
+  \draw[ultra thick,red]   (3d cs:0,0,0)--(3d cs:1,0,0);
+  \draw[ultra thick,green] (3d cs:0,0,0)--(3d cs:0,1,0);
+  \draw[ultra thick,blue]  (3d cs:0,0,0)--(3d cs:0,0,1);
     \foreach \n/\x/\y in {A/-1/-1,B/1/-1,C/-1/1,D/1/1}
-      {\coordinate (\n)   at ($0.5*(\x,\y,0)$);
-       \coordinate (\n\n) at ($(\n)+\sp*(\x,\y,0)+\sz*(0,0,1)$);}
+      {\coordinate (\n)   at (3d cs:.5*\x,.5*\y,0);
+       \coordinate (\n\n) at (3d cs:.5*\x+\sp*\x,.5*\y+\sp*\y,\sz);}
     \foreach \m/\n/\x/\y in {A/B/0/-1,B/D/1/0,C/D/0/1,A/C/-1/0}
-      \coordinate (\m\n) at ($(\m)!0.5!(\n)+\hp*(\x,\y,0)+\hz*(0,0,1)$);
+      \coordinate (\m\n) at (3d cs:.5*\x+\hp*\x,.5*\y+\hp*\y,\hz);
     \foreach \n/\u in {Y/C,X/B}
       \coordinate (\n) at ($(A\u)-(\u\u)+(\u D)$);
-  \stopscope
-  \mor DD ≡>,dim $(C)!.5!(CC)$;                      % back face, right
-  \mor AC ≡>,dim $(A)!.5!(C)$;                       % back face, left
+    \foreach \n/\x/\y in {A/-1/-1,B/1/-1,C/-1/1,D/1/1}
+      {\fill (\n) circle (2pt);\fill (\n\n) circle (2pt);}
+    \foreach \m/\n/\x/\y in {A/B/0/-1,B/D/1/0,C/D/0/1,A/C/-1/0}
+      \fill (\m\n) circle (2pt);
+%  \mor DD ≡>,dim $(C)!.5!(CC)$;                      % back face, right
+%  \mor AC ≡>,dim $(A)!.5!(C)$;                       % back face, left
   \mor CD -<- DD -<- BD -<- BB;                      % crown, right 
   \mor CC ·<· AC -<- AA -<- AB;                      % crown, left
   \mor C ·<· D -<- B;                                % floor, right
   \mor * ·<· A -<- *;                                % floor, left
   \mor[red] CD ·<· CC ·<· C ·<· B -<- BB -<- AB;     % source edge
-  \mor[blue]  * -<-  Y -<- X -<- *;                  % target edge
-  \mor BD -<- X; \mor A -<- AA;
-  \mor DD -<- D; \mor Y -<- AC;
-  \mor BD ≡> $(B)!.5!(D)$;                           % front face, bottom right
-  \mor AA ≡> $(B)!.5!(BB)$;                          % front face, bottom left
-  \mor Y  ≡> $(BD)!.5!(DD)$;                         % front face, top right
-  \mor X  ≡> $(AA)!.5!(AC)$;                         % front face, top left
+%  \mor[blue]  * -<-  Y -<- X -<- *;                  % target edge
+%  \mor BD -<- X; \mor A -<- AA;
+%  \mor DD -<- D; \mor Y -<- AC;
+%  \mor BD ≡> $(B)!.5!(D)$;                           % front face, bottom right
+%  \mor AA ≡> $(B)!.5!(BB)$;                          % front face, bottom left
+%  \mor Y  ≡> $(BD)!.5!(DD)$;                         % front face, top right
+%  \mor X  ≡> $(AA)!.5!(AC)$;                         % front face, top left
 \stoptikzpicture
