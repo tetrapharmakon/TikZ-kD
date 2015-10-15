@@ -1,20 +1,18 @@
+
 \input tikz
 
-\usetikzlibrary[dD]
+\usetikzlibrary[kD]
 
-\tikzpicture[/3d/camera/.cd,
-  position={11,11,-11},
-  field of view=40,
-  viewport={draw,clip},
-  rotate/x=-45,
-  rotate/y=45,]
-\draw[->,red] (3d cs:0,0,0)--(3d cs:10,0,0);
-\draw[->,green] (3d cs:0,0,0)--(3d cs:0,10,0);
-\draw[->,blue] (3d cs:0,0,0)--(3d cs:0,0,10);
-\foreach \x in {0,5,10}
-\foreach \y in {0,5,10}
-\foreach \z in {0,5,10}
-\fill (3d cs: \x, \y, \z) circle (1pt);
+\tikzpicture
+
+\def\baz{mao}
+
+\node[self naming node,at={(0,0)   },node contents={\baz X}];
+\node[self naming node,at={(10em,0)},node contents={Y}];
+\draw (baz X) -- (Y);
+
+
 \endtikzpicture
 
 \bye
+
