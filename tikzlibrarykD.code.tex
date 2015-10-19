@@ -27,8 +27,27 @@
 
 \usetikzlibrary[decorations.pathreplacing]
 
+\usetikzlibrary{decorations.pathmorphing}
+
+\usetikzlibrary[decorations.markings]
+\usetikzlibrary[arrows.meta]
+
 \usetikzlibrary[kD.core]
 
+
+% ================================================================= ENVIROMENT =
+
+% (La)TeX
+\def\kD{\tikzpicture}
+\def\endkD{\endtikzpicture}
+\let\commutativediagram\kD
+\let\endcommutativediagram\endkD
+
+% ConTeXt
+\def\startkD{\starttikzpicture}
+\def\stopkD{\stoptikzpicture}
+\let\startcommutativediagram\startkD
+\let\stopcommutativediagram\stopkD
 
 
 % #################################################################### THE END #

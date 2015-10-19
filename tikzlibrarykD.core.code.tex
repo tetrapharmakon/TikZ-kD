@@ -17,11 +17,6 @@
 
 % ################################################################ LET'S DANCE #
 
-\usetikzlibrary{decorations.pathmorphing}
-
-\usetikzlibrary[decorations.markings]
-\usetikzlibrary[arrows.meta]
-
 % ==================================================================== STYLING =
 
 \def\kDRemoveParens(#1){#1}
@@ -214,19 +209,5 @@
 
 \def\lattice[#1]{\matrix[/kD/every matrix,#1]}
 
-
-% ================================================================= ENVIROMENT =
-
-% (La)TeX
-\def\kD{\tikzpicture}
-\def\endkD{\endtikzpicture}
-\let\commutativediagram\kD
-\let\endcommutativediagram\endkD
-
-% ConTeXt
-\def\startkD{\starttikzpicture}
-\def\stopkD{\stoptikzpicture}
-\let\startcommutativediagram\startkD
-\let\stopcommutativediagram\stopkD
 
 % #################################################################### THE END #
