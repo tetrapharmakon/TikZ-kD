@@ -61,10 +61,12 @@
 % Spaces after number to avoid stray \relax
 \def\kDSieveCharacter#1\GO%
   {\ifnum`#1=36 \else% $ dollar
+   \ifnum`#1=40 \else% ( left round brace
+   \ifnum`#1=41 \else% ) right round brace
    \ifnum`#1=44 \else% , comma
    \ifnum`#1=46 \else% . dot
    \ifnum`#1=58 \else% : colon
    \ifnum`#1=92 \else% \ backslash
-   #1\fi\fi\fi\fi\fi}
+   #1\fi\fi\fi\fi\fi\fi\fi}
 
 % #################################################################### THE END #
