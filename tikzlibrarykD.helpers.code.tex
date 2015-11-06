@@ -1,4 +1,4 @@
-% tikzlibrarykD.code.tex
+% tikzlibrarykD.helpers.code.tex
 %
 % Copyright 2015 by Paolo Brasolin <paolo.brasolin@gmail.com>
 %
@@ -15,7 +15,7 @@
 % You should have received a copy of the GNU General Public License
 % along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-% ################################################################ LET'S DANCE #
+% ######################################################################## SOF #
 
 \def\kDCSDef#1#2{\expandafter\def\csname#1\endcsname{#2}}
 
@@ -31,4 +31,30 @@
 
 \def\kDFullExpandAfter#1#2{\edef\tmp{#2}\expandafter#1\tmp}
 
-% #################################################################### THE END #
+% ============================================================ PARSING HELPERS =
+
+\def\kDSplice#1\at#2\into#3\and#4\GO%
+  {\def\Rimmer##1#2\GO{\kDCSDef{#4}{##1}}%
+   \def\Cutter##1#2##2\GO%
+     {\def\snd{##2}\ifx\snd\empty\kDCSDef{#3}{}\kDCSDef{#4}{##1}%
+      \else\kDCSDef{#3}{##1}\Rimmer##2\GO\fi}%
+   \Cutter#1#2\GO}
+
+\def\kDTrisect#1\at#2\into#3\and#4\and#5\GO%
+  {\def\Cut#2##1#2##2#2##3#2##4\GO%
+     {\def\cnt{##4}\def\one{#2}\def\two{#2#2}\def\thr{#2#2#2}
+      \ifx\cnt\one\kDCSDef{#3}{##1}\kDCSDef{#4}{}   \kDCSDef{#5}{}   \else
+      \ifx\cnt\two\kDCSDef{#3}{##2}\kDCSDef{#4}{##1}\kDCSDef{#5}{}   \else
+      \ifx\cnt\thr\kDCSDef{#3}{##3}\kDCSDef{#4}{##2}\kDCSDef{#5}{##1}\else
+      \errmessage{PROBLEMS, YO!}\fi\fi\fi}
+   \Cut#2#1#2#2#2#2\GO}
+
+\def\kDBisect#1\at#2\into#3\and#4\GO%
+  {\def\Cut#2##1#2##2#2##3\GO%
+     {\def\cnt{##3}\def\one{#2}\def\two{#2#2}
+      \ifx\cnt\one\kDCSDef{#3}{##1}\kDCSDef{#4}{}   \else
+      \ifx\cnt\two\kDCSDef{#3}{##2}\kDCSDef{#4}{##1}\else
+      \errmessage{PROBLEMS, YO!}\fi\fi}
+   \Cut#2#1#2#2#2\GO}
+
+% ######################################################################## EOF #

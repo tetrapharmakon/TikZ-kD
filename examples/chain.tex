@@ -1,9 +1,0 @@
-\startkD[name generator/expand=true]
-
-\foreach [count=\m] \a in {A,B,C}
-  \foreach [count=\n] \i in {n-2,n-1,n,n+1,n+2}
-    \obj at=({5em*\n,-3em*\m}): \a_{\i};
-
-\mor C_{n+1} >-> B_{n-1};
-
-\stopkD

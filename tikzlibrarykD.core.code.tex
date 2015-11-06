@@ -1,4 +1,4 @@
-% tikzlibrarykD.code.tex
+% tikzlibrarykD.core.code.tex
 %
 % Copyright 2015 by Paolo Brasolin <paolo.brasolin@gmail.com>
 %
@@ -15,7 +15,7 @@
 % You should have received a copy of the GNU General Public License
 % along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-% ################################################################ LET'S DANCE #
+% ######################################################################## SOF #
 
 % ==================================================================== STYLING =
 
@@ -28,11 +28,11 @@
   objects/.search also=/tikz,
   arrows/.search also=/tikz,
   labels/.search also=/tikz,
-  matrices/.search also=/tikz,
+  lattices/.search also=/tikz,
   every object/.style={/kD/objects/.cd},
   every arrow/.style={/kD/arrows/.cd},
   every label/.style={/kD/labels/.cd},
-  every matrix/.style={/kD/matrices/.cd},
+  every lattice/.style={/kD/lattices/.cd},
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   current chain/.style={},
   current chain/arrows/.style={},
@@ -51,7 +51,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   /kD/arrows/.cd,
     ->/.style={-Stealth},
-  /kD/matrices/.cd,
+  /kD/lattices/.cd,
     comb/.style={
       /tikz/row sep={sqrt(3/4)*#1,between origins},
       /tikz/column sep={#1,between origins},
@@ -66,6 +66,8 @@
       /tikz/column sep=1.618*#1,},
     gold/.default=1.618em,
   /kD/arrows/.cd,
+    l>/.style={bend right,->},
+    r>/.style={bend left,->},
     crossing over/.style={preaction={-,
       draw=\pgfkeysvalueof{/kD/arrows/crossing over/color},
       line width=\pgfkeysvalueof{/kD/arrows/crossing over/clearance},},},
@@ -116,32 +118,6 @@
       {\pgfpointdecoratedinputsegmentlast}
       {\pgfpointdecoratedinputsegmentlast}}
   },decorate}}
-
-% ============================================================ PARSING HELPERS =
-
-\def\kDSplice#1\at#2\into#3\and#4\GO%
-  {\def\Rimmer##1#2\GO{\kDCSDef{#4}{##1}}%
-   \def\Cutter##1#2##2\GO%
-     {\def\snd{##2}\ifx\snd\empty\kDCSDef{#3}{}\kDCSDef{#4}{##1}%
-      \else\kDCSDef{#3}{##1}\Rimmer##2\GO\fi}%
-   \Cutter#1#2\GO}
-
-\def\kDTrisect#1\at#2\into#3\and#4\and#5\GO%
-  {\def\Cut#2##1#2##2#2##3#2##4\GO%
-     {\def\cnt{##4}\def\one{#2}\def\two{#2#2}\def\thr{#2#2#2}
-      \ifx\cnt\one\kDCSDef{#3}{##1}\kDCSDef{#4}{}   \kDCSDef{#5}{}   \else
-      \ifx\cnt\two\kDCSDef{#3}{##2}\kDCSDef{#4}{##1}\kDCSDef{#5}{}   \else
-      \ifx\cnt\thr\kDCSDef{#3}{##3}\kDCSDef{#4}{##2}\kDCSDef{#5}{##1}\else
-      \errmessage{PROBLEMS, YO!}\fi\fi\fi}
-   \Cut#2#1#2#2#2#2\GO}
-
-\def\kDBisect#1\at#2\into#3\and#4\GO%
-  {\def\Cut#2##1#2##2#2##3\GO%
-     {\def\cnt{##3}\def\one{#2}\def\two{#2#2}
-      \ifx\cnt\one\kDCSDef{#3}{##1}\kDCSDef{#4}{}   \else
-      \ifx\cnt\two\kDCSDef{#3}{##2}\kDCSDef{#4}{##1}\else
-      \errmessage{PROBLEMS, YO!}\fi\fi}
-   \Cut#2#1#2#2#2\GO}
 
 % ========================================================= DRAWING PRIMITIVES =
 
@@ -205,9 +181,6 @@
 \def\MaybeOptMor{\ifx[\MaybeSquare \let\next\MorOpt
 \else \let\next\MorChain \fi \next}
 
+\def\lattice[#1]{\matrix[/kD/every lattice,#1]}
 
-
-\def\lattice[#1]{\matrix[/kD/every matrix,#1]}
-
-
-% #################################################################### THE END #
+% ######################################################################## EOF #
