@@ -100,6 +100,7 @@
    \pgfmathsetmacro\start{\Fst}
    \pgfmathsetmacro\stop{1-\Lst}}
 
+
 \tikzset{/kD/arrows/chop/.style={ 
   decoration={ 
     show path construction, 
@@ -117,7 +118,10 @@
       {\pgfpointdecoratedinputsegmentfirst}
       {\pgfpointdecoratedinputsegmentlast}
       {\pgfpointdecoratedinputsegmentlast}}
-  },decorate}}
+  },decorate},
+  % the following key has to be integrated into the syntax of the main key
+  /kD/arrows/schop/.style={/kD/arrows/chop=#1|*|#1},
+}
 
 % ========================================================= DRAWING PRIMITIVES =
 
