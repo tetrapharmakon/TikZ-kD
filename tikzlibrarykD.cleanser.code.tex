@@ -1,21 +1,23 @@
-% tikzlibrarykD.cleanser.code.tex
-%
-% Copyright 2015 by Paolo Brasolin <paolo.brasolin@gmail.com>
-%
-% This program is free software: you can redistribute it and/or modify
-% it under the terms of the GNU General Public License as published by
-% the Free Software Foundation, either version 3 of the License, or
-% (at your option) any later version.
-%
-% This program is distributed in the hope that it will be useful,
-% but WITHOUT ANY WARRANTY; without even the implied warranty of
-% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-% GNU General Public License for more details.
-% 
-% You should have received a copy of the GNU General Public License
-% along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-% ######################################################################## SOF #
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                              %
+%  Copyright 2015 by Paolo Brasolin <paolo.brasolin@gmail.com>                 %
+%                                                                              %
+%  This file is part of kD.                                                    %
+%                                                                              %
+%  kD is free software: you can redistribute it and/or modify                  %
+%  it under the terms of the GNU General Public License as published by        %
+%  the Free Software Foundation, either version 3 of the License, or           %
+%  (at your option) any later version.                                         %
+%                                                                              %
+%  kD is distributed in the hope that it will be useful,                       %
+%  but WITHOUT ANY WARRANTY; without even the implied warranty of              %
+%  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               %
+%  GNU General Public License for more details.                                %
+%                                                                              %
+%  You should have received a copy of the GNU General Public License           %
+%  along with kD.  If not, see <http://www.gnu.org/licenses/>.                 %
+%                                                                              %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \pgfqkeys{/cleanser/expand}{.is choice,
   none/.style={/cleanser/input/.style={/cleanser/process={##1}}},
@@ -59,12 +61,12 @@
 % Spaces after number to avoid stray \relax
 \def\kDSieveCharacter#1\GO%
   {\ifnum`#1=36 \else% $ dollar
-   \ifnum`#1=40 \else% ( left round brace
-   \ifnum`#1=41 \else% ) right round brace
    \ifnum`#1=44 \else% , comma
    \ifnum`#1=46 \else% . dot
    \ifnum`#1=58 \else% : colon
    \ifnum`#1=92 \else% \ backslash
+   \ifnum`#1=40 \else% ( left round brace
+   \ifnum`#1=41 \else% ) right round brace
    #1\fi\fi\fi\fi\fi\fi\fi}
 
-% ######################################################################## EOF #
+% #################################################################### THE END #
